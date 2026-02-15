@@ -29,13 +29,7 @@ export default defineConfig(({ mode }) => {
           }
         }
       },
-      chunkSizeWarningLimit: 1000,
-      minify: 'terser',
-      terserOptions: {
-        compress: {
-          drop_console: true,
-        }
-      }
+      chunkSizeWarningLimit: 1000
     },
     optimizeDeps: {
       include: ['react', 'react-dom', 'framer-motion', 'lucide-react']
