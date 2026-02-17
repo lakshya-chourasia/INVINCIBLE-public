@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Code, Users, Rocket, Zap, ChevronRight, Terminal, UserPlus, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Code, Users, Rocket, Zap, ChevronRight, Terminal, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { SpotlightCard } from './SpotlightCard';
 
 export const Home: React.FC<{ setPage: (p: string) => void }> = ({ setPage }) => (
