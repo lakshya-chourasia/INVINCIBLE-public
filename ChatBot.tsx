@@ -117,6 +117,8 @@ export const ChatBot: React.FC = () => {
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsOpen(true)}
             className="w-14 h-14 md:w-16 md:h-16 rounded-full liquid-glass purple-liquid-glass flex items-center justify-center text-white shadow-2xl"
+            aria-label="Open AI Assistant"
+            aria-expanded={isOpen}
           >
             <Sparkles className="w-6 h-6 md:w-8 md:h-8" />
           </motion.button>
@@ -130,6 +132,9 @@ export const ChatBot: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1, x: 0 }}
             exit={{ opacity: 0, y: 100, scale: 0.9, x: 20 }}
             className="w-[calc(100vw-32px)] md:w-[450px] h-[75vh] md:h-[650px] rounded-[32px] md:rounded-[40px] liquid-glass border-white/20 flex flex-col shadow-[0_50px_100px_rgba(0,0,0,0.8)] overflow-hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label="AI Assistant Chat"
           >
             {/* Header */}
             <div className="p-4 md:p-6 border-b border-white/10 flex items-center justify-between bg-white/5">
@@ -150,6 +155,7 @@ export const ChatBot: React.FC = () => {
                 <button 
                   onClick={() => setIsPro(!isPro)}
                   className={`flex items-center gap-1.5 md:gap-2 px-2.5 py-1 md:px-3 md:py-1.5 rounded-full border transition-all duration-300 ${isPro ? 'bg-[#5227FF]/20 border-[#5227FF]/50 text-white' : 'bg-white/5 border-white/10 text-zinc-500'}`}
+                  aria-label={isPro ? "Switch to Flash model" : "Switch to Pro model"}
                 >
                   {isPro ? <BrainCircuit className="w-2.5 h-2.5 md:w-3 md:h-3" /> : <Zap className="w-2.5 h-2.5 md:w-3 md:h-3" />}
                   <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest">{isPro ? 'Pro' : 'Flash'}</span>
@@ -157,6 +163,7 @@ export const ChatBot: React.FC = () => {
                 <button 
                   onClick={() => setIsOpen(false)}
                   className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors"
+                  aria-label="Close AI Assistant"
                 >
                   <X className="w-4 h-4 text-zinc-400" />
                 </button>
@@ -167,6 +174,10 @@ export const ChatBot: React.FC = () => {
             <div 
               ref={scrollRef}
               className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 scrollbar-hide bg-black/20"
+              role="log"
+              aria-live="polite"
+              aria-label="Chat history"
+              tabIndex={0}
             >
               {messages.map((m) => (
                 <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -205,11 +216,14 @@ export const ChatBot: React.FC = () => {
                   onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                   placeholder="Execute command..."
                   className="w-full bg-white/5 border border-white/10 rounded-full py-3 md:py-4 pl-5 md:pl-6 pr-14 md:pr-16 text-[11px] md:text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-[#5227FF]/50 transition-all"
+                  aria-label="Command input"
+                  autoFocus
                 />
                 <button 
                   onClick={handleSend}
                   disabled={isLoading || !input.trim()}
                   className="absolute right-1.5 w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#5227FF] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100"
+                  aria-label="Send message"
                 >
                   <Send className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 </button>
