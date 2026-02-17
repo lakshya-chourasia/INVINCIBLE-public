@@ -6,6 +6,7 @@ import { globalStyles } from './styles';
 import { GlobalInteraction } from './GlobalInteraction';
 import { LetterGlitch } from './LetterGlitch';
 import { Home, PlaceholderPage, JoinCollective } from './SubPages';
+import { ChatBot } from './ChatBot';
 
 // Lazy load the heavy StaggeredMenu component
 const StaggeredMenu = lazy(() => import('./StaggeredMenu'));
@@ -80,6 +81,7 @@ export default function App() {
         </AnimatePresence>
       </main>
 
+      <ChatBot />
 
       <footer className="relative z-10 border-t border-zinc-900 pt-32 pb-16 mt-32 bg-[#050505]">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-20">
