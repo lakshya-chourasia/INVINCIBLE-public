@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 
 export const LetterGlitch: React.FC = () => {
@@ -28,6 +27,33 @@ export const LetterGlitch: React.FC = () => {
 
     let grid = generateGrid();
 
+    const drawCell = (x: number, y: number, cell: { char: string, color: string, opacity: number }) => {
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(x * fontSize, y * fontSize, fontSize, fontSize);
+
+      ctx.fillStyle = cell.color;
+      ctx.globalAlpha = cell.opacity;
+      ctx.fillText(cell.char, x * fontSize, y * fontSize);
+    };
+
+    const drawFullGrid = () => {
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.font = `${fontSize}px var(--font-mono)`;
+      ctx.textBaseline = 'top';
+
+      for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+          drawCell(i, j, grid[i][j]);
+        }
+      }
+    };
+
+    drawFullGrid();
+
     let frame = 0;
     let lastTime = 0;
     const fps = 30; // Throttle to 30fps for better performance
@@ -42,21 +68,17 @@ export const LetterGlitch: React.FC = () => {
 
         // Only update every other frame for even better performance
         if (frame % 2 === 0) {
-          // Clear with slight transparency for a smooth "phosphor trail" effect
-          ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-          ctx.fillRect(0, 0, w, h);
-
           ctx.font = `${fontSize}px var(--font-mono)`;
           ctx.textBaseline = 'top';
 
-          // Update only a subset of cells per frame for better performance
-          const updateChance = 0.015; // Reduced from 0.02
+          // Optimized rendering: Only redraw cells that change (approx 1.5% per frame)
+          // instead of clearing and redrawing the entire canvas (14,000+ operations).
+          const updateChance = 0.015;
 
           for (let i = 0; i < cols; i++) {
             for (let j = 0; j < rows; j++) {
-              const cell = grid[i][j];
-
               if (Math.random() < updateChance) {
+                const cell = grid[i][j];
                 cell.char = chars[Math.floor(Math.random() * chars.length)];
                 if (Math.random() < 0.03) {
                   cell.color = accents[Math.floor(Math.random() * accents.length)];
@@ -65,22 +87,11 @@ export const LetterGlitch: React.FC = () => {
                   cell.color = baseColors[Math.floor(Math.random() * baseColors.length)];
                   cell.opacity = 0.15;
                 }
-              }
 
-              ctx.fillStyle = cell.color;
-              ctx.globalAlpha = cell.opacity;
-              ctx.fillText(cell.char, i * fontSize, j * fontSize);
+                drawCell(i, j, cell);
+              }
             }
           }
-
-          // Refined radial gradient for better central visibility
-          ctx.globalAlpha = 1;
-          const grad = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.max(w, h) * 0.8);
-          grad.addColorStop(0, 'rgba(0,0,0,0.85)');
-          grad.addColorStop(0.4, 'rgba(0,0,0,0.4)');
-          grad.addColorStop(1, 'rgba(0,0,0,0.1)');
-          ctx.fillStyle = grad;
-          ctx.fillRect(0, 0, w, h);
         }
       }
 
@@ -94,6 +105,7 @@ export const LetterGlitch: React.FC = () => {
       cols = Math.ceil(w / fontSize);
       rows = Math.ceil(h / fontSize);
       grid = generateGrid();
+      drawFullGrid();
     };
 
     window.addEventListener('resize', handleResize);
@@ -101,10 +113,20 @@ export const LetterGlitch: React.FC = () => {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 z-0 pointer-events-none"
-      style={{ opacity: 0.8 }}
-    />
+    <>
+      <canvas
+        ref={canvasRef}
+        className="fixed inset-0 z-0 pointer-events-none"
+        style={{ opacity: 0.8 }}
+      />
+      <div
+        className="fixed inset-0 z-0 pointer-events-none"
+        style={{
+          // Optimized: CSS overlay for radial gradient avoids per-frame canvas redraw
+          background: 'radial-gradient(circle 80vmax at center, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.1) 100%)',
+          opacity: 0.8
+        }}
+      />
+    </>
   );
 };
