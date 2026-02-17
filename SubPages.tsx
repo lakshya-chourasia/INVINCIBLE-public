@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Code, Users, Rocket, Zap, ChevronRight, Terminal, UserPlus, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { SpotlightCard } from './SpotlightCard';
+import { validateMemberForm } from './utils/validation';
 
 export const Home: React.FC<{ setPage: (p: string) => void }> = ({ setPage }) => (
   <article className="space-y-12 md:space-y-32">
@@ -132,6 +133,14 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    // Security Validation
+    const validationError = validateMemberForm(formData);
+    if (validationError) {
+      setError(validationError);
+      setLoading(false);
+      return;
+    }
 
     try {
       const { error: dbError } = await supabase
