@@ -115,11 +115,13 @@ export const PlaceholderPage: React.FC<{ name: string }> = ({ name }) => (
 );
 
 import { supabase } from './supabase';
+import { validateForm } from './utils/validation';
 
 export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ setPage }) => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     name: '',
     number: '',
@@ -132,6 +134,15 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    // Client-side validation
+    const errors = validateForm(formData);
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      setLoading(false);
+      return;
+    }
+    setValidationErrors({});
 
     try {
       const { error: dbError } = await supabase
@@ -208,8 +219,9 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
                 value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
                 placeholder="0x_identity"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm text-white focus:outline-none focus:border-[#5227FF]/50 transition-all placeholder-zinc-700 disabled:opacity-50"
+                className={`w-full bg-white/5 border ${validationErrors.name ? 'border-red-500' : 'border-white/10'} rounded-2xl py-4 px-6 text-sm text-white focus:outline-none focus:border-[#5227FF]/50 transition-all placeholder-zinc-700 disabled:opacity-50`}
               />
+              {validationErrors.name && <p className="text-red-500 text-[9px] font-bold uppercase tracking-widest mt-1">{validationErrors.name}</p>}
             </div>
             <div className="space-y-2">
               <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">comms_channel_id*</label>
@@ -220,8 +232,9 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
                 value={formData.number}
                 onChange={e => setFormData({ ...formData, number: e.target.value })}
                 placeholder="+00_telemetry"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm text-white focus:outline-none focus:border-[#5227FF]/50 transition-all placeholder-zinc-700 disabled:opacity-50"
+                className={`w-full bg-white/5 border ${validationErrors.number ? 'border-red-500' : 'border-white/10'} rounded-2xl py-4 px-6 text-sm text-white focus:outline-none focus:border-[#5227FF]/50 transition-all placeholder-zinc-700 disabled:opacity-50`}
               />
+              {validationErrors.number && <p className="text-red-500 text-[9px] font-bold uppercase tracking-widest mt-1">{validationErrors.number}</p>}
             </div>
             <div className="space-y-2">
               <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">net_address*</label>
@@ -232,8 +245,9 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
                 value={formData.email}
                 onChange={e => setFormData({ ...formData, email: e.target.value })}
                 placeholder="protocol@intelligence.net"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm text-white focus:outline-none focus:border-[#5227FF]/50 transition-all placeholder-zinc-700 disabled:opacity-50"
+                className={`w-full bg-white/5 border ${validationErrors.email ? 'border-red-500' : 'border-white/10'} rounded-2xl py-4 px-6 text-sm text-white focus:outline-none focus:border-[#5227FF]/50 transition-all placeholder-zinc-700 disabled:opacity-50`}
               />
+              {validationErrors.email && <p className="text-red-500 text-[9px] font-bold uppercase tracking-widest mt-1">{validationErrors.email}</p>}
             </div>
             <div className="space-y-2">
               <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">linkedin_node*</label>
@@ -244,8 +258,9 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
                 value={formData.linkedin}
                 onChange={e => setFormData({ ...formData, linkedin: e.target.value })}
                 placeholder="linkedin.com/in/identity"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm text-white focus:outline-none focus:border-[#5227FF]/50 transition-all placeholder-zinc-700 disabled:opacity-50"
+                className={`w-full bg-white/5 border ${validationErrors.linkedin ? 'border-red-500' : 'border-white/10'} rounded-2xl py-4 px-6 text-sm text-white focus:outline-none focus:border-[#5227FF]/50 transition-all placeholder-zinc-700 disabled:opacity-50`}
               />
+              {validationErrors.linkedin && <p className="text-red-500 text-[9px] font-bold uppercase tracking-widest mt-1">{validationErrors.linkedin}</p>}
             </div>
             <div className="space-y-2 md:col-span-2">
               <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">github_node_optional</label>
@@ -255,8 +270,9 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
                 value={formData.github}
                 onChange={e => setFormData({ ...formData, github: e.target.value })}
                 placeholder="github.com/repository_host"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm text-white focus:outline-none focus:border-[#5227FF]/50 transition-all placeholder-zinc-700 disabled:opacity-50"
+                className={`w-full bg-white/5 border ${validationErrors.github ? 'border-red-500' : 'border-white/10'} rounded-2xl py-4 px-6 text-sm text-white focus:outline-none focus:border-[#5227FF]/50 transition-all placeholder-zinc-700 disabled:opacity-50`}
               />
+              {validationErrors.github && <p className="text-red-500 text-[9px] font-bold uppercase tracking-widest mt-1">{validationErrors.github}</p>}
             </div>
           </div>
 
