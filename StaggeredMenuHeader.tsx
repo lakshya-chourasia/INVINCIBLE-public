@@ -29,14 +29,16 @@ export const StaggeredMenuHeader: React.FC<StaggeredMenuHeaderProps> = ({
 }) => {
   return (
     <header className="staggered-menu-header">
-      <div 
+      <button
+        type="button"
         className="sm-logo liquid-glass" 
         onClick={onLogoClick}
         data-glitch={open || undefined}
+        aria-label="Home"
       >
         <Command className="sm-logo-icon" />
         <span className="ml-3 text-[10px] font-black uppercase tracking-[0.4em] text-white hidden sm:inline">Invincible_v2</span>
-      </div>
+      </button>
       
       <div className="sm-header-actions">
         <button className="sm-join-btn liquid-glass purple-liquid-glass" onClick={onJoinClick}>
@@ -49,8 +51,10 @@ export const StaggeredMenuHeader: React.FC<StaggeredMenuHeaderProps> = ({
           className="sm-toggle liquid-glass"
           onClick={toggleMenu}
           aria-expanded={open}
+          aria-controls="staggered-menu-panel"
+          aria-label={open ? "Close menu" : "Open menu"}
         >
-          <span className="sm-toggle-textWrap">
+          <span className="sm-toggle-textWrap" aria-hidden="true">
             <span ref={textInnerRef} className="sm-toggle-textInner">
               {textLines.map((l, i) => <span className="sm-toggle-line" key={i}>{l}</span>)}
             </span>
