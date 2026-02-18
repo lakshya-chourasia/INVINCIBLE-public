@@ -35,7 +35,7 @@ export const StaggeredMenuPanel: React.FC<StaggeredMenuPanelProps> = ({
   socialItems
 }) => {
   return (
-    <aside ref={panelRef} className="staggered-menu-panel" aria-hidden={!open}>
+    <aside ref={panelRef} id="staggered-menu-panel" className="staggered-menu-panel" aria-hidden={!open}>
       <div 
         className={`sm-resize-handle ${isResizing ? 'is-resizing' : ''}`}
         onMouseDown={onResizeStart}
