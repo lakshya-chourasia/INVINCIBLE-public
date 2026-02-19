@@ -115,6 +115,7 @@ export const PlaceholderPage: React.FC<{ name: string }> = ({ name }) => (
 );
 
 import { supabase } from './supabase';
+import { validateJoinForm } from './utils/validation';
 
 export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ setPage }) => {
   const [submitted, setSubmitted] = useState(false);
@@ -132,6 +133,16 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    // Client-side validation
+    const validation = validateJoinForm(formData);
+    if (!validation.isValid) {
+      // Display the first error found
+      const firstError = Object.values(validation.errors)[0];
+      setError(`Validation Error: ${firstError}`);
+      setLoading(false);
+      return;
+    }
 
     try {
       const { error: dbError } = await supabase
@@ -151,7 +162,7 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
       setSubmitted(true);
     } catch (err: any) {
       console.error('Error saving to database:', err);
-      setError(err.message || 'Synchronization failed. Please check your credentials.');
+      setError('Synchronization failed. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }
