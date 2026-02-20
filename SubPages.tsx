@@ -115,6 +115,7 @@ export const PlaceholderPage: React.FC<{ name: string }> = ({ name }) => (
 );
 
 import { supabase } from './supabase';
+import { sanitizeInput, isValidName, isValidPhone, isValidEmail, isValidUrl } from './utils/validation';
 
 export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ setPage }) => {
   const [submitted, setSubmitted] = useState(false);
@@ -133,16 +134,48 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
     setLoading(true);
     setError(null);
 
+    const name = sanitizeInput(formData.name);
+    const number = sanitizeInput(formData.number);
+    const email = sanitizeInput(formData.email);
+    const linkedin = sanitizeInput(formData.linkedin);
+    const github = sanitizeInput(formData.github);
+
+    if (!isValidName(name)) {
+      setError('Invalid name format (2-50 characters)');
+      setLoading(false);
+      return;
+    }
+    if (!isValidPhone(number)) {
+      setError('Invalid phone number format');
+      setLoading(false);
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setError('Invalid email address');
+      setLoading(false);
+      return;
+    }
+    if (!isValidUrl(linkedin, 'linkedin.com')) {
+      setError('Invalid LinkedIn URL (must be linkedin.com)');
+      setLoading(false);
+      return;
+    }
+    if (github && !isValidUrl(github, 'github.com')) {
+      setError('Invalid GitHub URL (must be github.com)');
+      setLoading(false);
+      return;
+    }
+
     try {
       const { error: dbError } = await supabase
         .from('members')
         .insert([
           {
-            name: formData.name,
-            phone: formData.number,
-            email: formData.email,
-            linkedin: formData.linkedin,
-            github: formData.github
+            name,
+            phone: number,
+            email,
+            linkedin,
+            github
           }
         ]);
 
