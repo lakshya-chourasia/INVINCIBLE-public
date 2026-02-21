@@ -1,5 +1,17 @@
-
 import React, { useEffect, useRef } from 'react';
+
+const fontSize = 12;
+const chars = '01<{}>[]/\\+-*=&|^!%~?#@';
+const baseColors = ['#080808', '#0a0a0a', '#0c0c0c', '#0e0e0e'];
+const accents = ['#5227FF', '#FE8BBB', '#ffffff'];
+
+// Precompute mappings to avoid lookups in the loop
+const charIndexMap: Record<string, number> = {};
+chars.split('').forEach((c, i) => { charIndexMap[c] = i; });
+
+const colorRowMap: Record<string, number> = {};
+baseColors.forEach((c, i) => { colorRowMap[c] = i; }); // Rows 0-3 (opacity 0.15)
+accents.forEach((c, i) => { colorRowMap[c] = i + baseColors.length; }); // Rows 4-6 (opacity 0.6)
 
 export const LetterGlitch: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -12,24 +24,56 @@ export const LetterGlitch: React.FC = () => {
     let w = canvas.width = window.innerWidth;
     let h = canvas.height = window.innerHeight;
 
-    // Increased font size for better clarity and less "noisy" feel
-    const fontSize = 12;
-    const chars = '01<{}>[]/\\+-*=&|^!%~?#@';
-    const baseColors = ['#080808', '#0a0a0a', '#0c0c0c', '#0e0e0e'];
-    const accents = ['#5227FF', '#FE8BBB', '#ffffff'];
     let cols = Math.ceil(w / fontSize);
     let rows = Math.ceil(h / fontSize);
+
+    // --- Optimization: Offscreen Canvas Cache ---
+    const offscreen = document.createElement('canvas');
+    const charWidth = fontSize;
+    const charHeight = fontSize;
+    const totalColors = baseColors.length + accents.length;
+
+    offscreen.width = chars.length * charWidth;
+    offscreen.height = totalColors * charHeight;
+
+    const offCtx = offscreen.getContext('2d', { alpha: true });
+    if (!offCtx) return;
+
+    // Use computed style to ensure correct font stack
+    const computedFont = getComputedStyle(document.body).getPropertyValue('--font-mono') || 'monospace';
+    offCtx.font = `${fontSize}px ${computedFont}`;
+    offCtx.textBaseline = 'top';
+
+    // Draw all sprites
+    // Rows 0-3: Base colors (opacity 0.15)
+    baseColors.forEach((color, row) => {
+      offCtx.fillStyle = color;
+      offCtx.globalAlpha = 0.15;
+      chars.split('').forEach((char, col) => {
+        offCtx.fillText(char, col * charWidth, row * charHeight);
+      });
+    });
+
+    // Rows 4-6: Accent colors (opacity 0.6)
+    accents.forEach((color, i) => {
+      const row = baseColors.length + i;
+      offCtx.fillStyle = color;
+      offCtx.globalAlpha = 0.6;
+      chars.split('').forEach((char, col) => {
+        offCtx.fillText(char, col * charWidth, row * charHeight);
+      });
+    });
+    // --------------------------------------------
 
     const generateGrid = () => Array(cols).fill(null).map(() => Array(rows).fill(null).map(() => ({
       char: chars[Math.floor(Math.random() * chars.length)],
       color: baseColors[Math.floor(Math.random() * baseColors.length)],
-      opacity: 0.15
     })));
 
     let grid = generateGrid();
 
     let frame = 0;
-    let lastTime = 0;
+    let lastTime = performance.now();
     const fps = 30; // Throttle to 30fps for better performance
     const interval = 1000 / fps;
 
@@ -46,11 +90,11 @@ export const LetterGlitch: React.FC = () => {
           ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
           ctx.fillRect(0, 0, w, h);
 
-          ctx.font = `${fontSize}px var(--font-mono)`;
-          ctx.textBaseline = 'top';
+          // Reset alpha for drawImage (as sprites already have alpha baked in)
+          ctx.globalAlpha = 1.0;
 
           // Update only a subset of cells per frame for better performance
-          const updateChance = 0.015; // Reduced from 0.02
+          const updateChance = 0.015;
 
           for (let i = 0; i < cols; i++) {
             for (let j = 0; j < rows; j++) {
@@ -60,16 +104,22 @@ export const LetterGlitch: React.FC = () => {
                 cell.char = chars[Math.floor(Math.random() * chars.length)];
                 if (Math.random() < 0.03) {
                   cell.color = accents[Math.floor(Math.random() * accents.length)];
-                  cell.opacity = 0.6;
                 } else {
                   cell.color = baseColors[Math.floor(Math.random() * baseColors.length)];
-                  cell.opacity = 0.15;
                 }
               }
 
-              ctx.fillStyle = cell.color;
-              ctx.globalAlpha = cell.opacity;
-              ctx.fillText(cell.char, i * fontSize, j * fontSize);
+              // Draw using cached sprite
+              // We rely on colorRowMap to get the row (which includes opacity)
+              const charIdx = charIndexMap[cell.char];
+              const rowIdx = colorRowMap[cell.color];
+
+              if (charIdx !== undefined && rowIdx !== undefined) {
+                ctx.drawImage(offscreen,
+                  charIdx * charWidth, rowIdx * charHeight, charWidth, charHeight,
+                  i * fontSize, j * fontSize, charWidth, charHeight
+                );
+              }
             }
           }
 
