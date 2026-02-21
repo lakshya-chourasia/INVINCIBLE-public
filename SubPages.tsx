@@ -115,11 +115,13 @@ export const PlaceholderPage: React.FC<{ name: string }> = ({ name }) => (
 );
 
 import { supabase } from './supabase';
+import { isValidName, isValidEmail, isValidPhone, isValidLinkedIn, isValidGitHub } from './utils/validation';
 
 export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ setPage }) => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
   const [formData, setFormData] = useState({
     name: '',
     number: '',
@@ -132,6 +134,20 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setFieldErrors({});
+
+    const validationErrors: { [key: string]: string } = {};
+    if (!isValidName(formData.name)) validationErrors.name = 'Invalid name format (2-100 chars)';
+    if (!isValidPhone(formData.number)) validationErrors.number = 'Invalid phone number';
+    if (!isValidEmail(formData.email)) validationErrors.email = 'Invalid email address';
+    if (!isValidLinkedIn(formData.linkedin)) validationErrors.linkedin = 'Invalid LinkedIn URL';
+    if (!isValidGitHub(formData.github)) validationErrors.github = 'Invalid GitHub URL';
+
+    if (Object.keys(validationErrors).length > 0) {
+      setFieldErrors(validationErrors);
+      setLoading(false);
+      return;
+    }
 
     try {
       const { error: dbError } = await supabase
@@ -210,6 +226,7 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
                 placeholder="0x_identity"
                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm text-white focus:outline-none focus:border-[#5227FF]/50 transition-all placeholder-zinc-700 disabled:opacity-50"
               />
+              {fieldErrors.name && <p className="text-red-500 text-[8px] uppercase tracking-widest mt-1 pl-2">{fieldErrors.name}</p>}
             </div>
             <div className="space-y-2">
               <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">comms_channel_id*</label>
@@ -222,6 +239,7 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
                 placeholder="+00_telemetry"
                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm text-white focus:outline-none focus:border-[#5227FF]/50 transition-all placeholder-zinc-700 disabled:opacity-50"
               />
+              {fieldErrors.number && <p className="text-red-500 text-[8px] uppercase tracking-widest mt-1 pl-2">{fieldErrors.number}</p>}
             </div>
             <div className="space-y-2">
               <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">net_address*</label>
@@ -234,6 +252,7 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
                 placeholder="protocol@intelligence.net"
                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm text-white focus:outline-none focus:border-[#5227FF]/50 transition-all placeholder-zinc-700 disabled:opacity-50"
               />
+              {fieldErrors.email && <p className="text-red-500 text-[8px] uppercase tracking-widest mt-1 pl-2">{fieldErrors.email}</p>}
             </div>
             <div className="space-y-2">
               <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">linkedin_node*</label>
@@ -246,6 +265,7 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
                 placeholder="linkedin.com/in/identity"
                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm text-white focus:outline-none focus:border-[#5227FF]/50 transition-all placeholder-zinc-700 disabled:opacity-50"
               />
+              {fieldErrors.linkedin && <p className="text-red-500 text-[8px] uppercase tracking-widest mt-1 pl-2">{fieldErrors.linkedin}</p>}
             </div>
             <div className="space-y-2 md:col-span-2">
               <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">github_node_optional</label>
@@ -257,6 +277,7 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
                 placeholder="github.com/repository_host"
                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm text-white focus:outline-none focus:border-[#5227FF]/50 transition-all placeholder-zinc-700 disabled:opacity-50"
               />
+              {fieldErrors.github && <p className="text-red-500 text-[8px] uppercase tracking-widest mt-1 pl-2">{fieldErrors.github}</p>}
             </div>
           </div>
 
