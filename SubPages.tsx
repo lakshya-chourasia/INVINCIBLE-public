@@ -115,6 +115,7 @@ export const PlaceholderPage: React.FC<{ name: string }> = ({ name }) => (
 );
 
 import { supabase } from './supabase';
+import { isValidName, isValidPhone, isValidEmail, isValidLinkedIn, isValidGitHub } from './utils/validation';
 
 export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ setPage }) => {
   const [submitted, setSubmitted] = useState(false);
@@ -132,6 +133,32 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    if (!isValidName(formData.name)) {
+      setError('Invalid name. Must be 2-50 characters (letters, numbers, spaces, -, _, \').');
+      setLoading(false);
+      return;
+    }
+    if (!isValidPhone(formData.number)) {
+      setError('Invalid phone number format.');
+      setLoading(false);
+      return;
+    }
+    if (!isValidEmail(formData.email)) {
+      setError('Invalid email address.');
+      setLoading(false);
+      return;
+    }
+    if (!isValidLinkedIn(formData.linkedin)) {
+      setError('Invalid LinkedIn URL. Must be a linkedin.com profile.');
+      setLoading(false);
+      return;
+    }
+    if (!isValidGitHub(formData.github)) {
+      setError('Invalid GitHub URL. Must be a github.com profile.');
+      setLoading(false);
+      return;
+    }
 
     try {
       const { error: dbError } = await supabase
