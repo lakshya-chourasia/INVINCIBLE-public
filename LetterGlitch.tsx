@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 
 export const LetterGlitch: React.FC = () => {
@@ -20,11 +19,43 @@ export const LetterGlitch: React.FC = () => {
     let cols = Math.ceil(w / fontSize);
     let rows = Math.ceil(h / fontSize);
 
-    const generateGrid = () => Array(cols).fill(null).map(() => Array(rows).fill(null).map(() => ({
-      char: chars[Math.floor(Math.random() * chars.length)],
-      color: baseColors[Math.floor(Math.random() * baseColors.length)],
-      opacity: 0.15
-    })));
+    // Resolve font from CSS variable once
+    const fontMono = getComputedStyle(document.documentElement).getPropertyValue('--font-mono').trim() || "'JetBrains Mono', monospace";
+
+    // Offscreen canvas cache for characters to avoid expensive fillText calls
+    const charCache = new Map<string, HTMLCanvasElement>();
+
+    const getCharImage = (char: string, color: string) => {
+      const key = `${char}-${color}`;
+      if (charCache.has(key)) return charCache.get(key)!;
+
+      const cacheCanvas = document.createElement('canvas');
+      cacheCanvas.width = fontSize;
+      cacheCanvas.height = fontSize;
+      const cacheCtx = cacheCanvas.getContext('2d', { alpha: true });
+
+      if (cacheCtx) {
+        // Use resolved font string instead of variable for offscreen canvas
+        cacheCtx.font = `${fontSize}px ${fontMono}`;
+        cacheCtx.textBaseline = 'top';
+        cacheCtx.fillStyle = color;
+        cacheCtx.fillText(char, 0, 0);
+      }
+
+      charCache.set(key, cacheCanvas);
+      return cacheCanvas;
+    };
+
+    const generateGrid = () => Array(cols).fill(null).map(() => Array(rows).fill(null).map(() => {
+      const char = chars[Math.floor(Math.random() * chars.length)];
+      const color = baseColors[Math.floor(Math.random() * baseColors.length)];
+      return {
+        char,
+        color,
+        opacity: 0.15,
+        image: getCharImage(char, color)
+      };
+    }));
 
     let grid = generateGrid();
 
@@ -46,8 +77,7 @@ export const LetterGlitch: React.FC = () => {
           ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
           ctx.fillRect(0, 0, w, h);
 
-          ctx.font = `${fontSize}px var(--font-mono)`;
-          ctx.textBaseline = 'top';
+          // ctx.font and ctx.textBaseline are no longer needed here as we draw images
 
           // Update only a subset of cells per frame for better performance
           const updateChance = 0.015; // Reduced from 0.02
@@ -65,11 +95,13 @@ export const LetterGlitch: React.FC = () => {
                   cell.color = baseColors[Math.floor(Math.random() * baseColors.length)];
                   cell.opacity = 0.15;
                 }
+                // Update cached image reference
+                cell.image = getCharImage(cell.char, cell.color);
               }
 
-              ctx.fillStyle = cell.color;
+              // Use drawImage instead of fillText for significantly better performance
               ctx.globalAlpha = cell.opacity;
-              ctx.fillText(cell.char, i * fontSize, j * fontSize);
+              ctx.drawImage(cell.image, i * fontSize, j * fontSize);
             }
           }
 
