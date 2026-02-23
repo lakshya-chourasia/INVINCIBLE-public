@@ -1,8 +1,15 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Code, Users, Rocket, Zap, ChevronRight, Terminal, UserPlus, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { SpotlightCard } from './SpotlightCard';
+import { supabase } from './supabase';
+import {
+  isValidName,
+  isValidPhone,
+  isValidEmail,
+  isValidLinkedIn,
+  isValidGitHub
+} from './utils/validation';
 
 export const Home: React.FC<{ setPage: (p: string) => void }> = ({ setPage }) => (
   <article className="space-y-12 md:space-y-32">
@@ -114,8 +121,6 @@ export const PlaceholderPage: React.FC<{ name: string }> = ({ name }) => (
   </section>
 );
 
-import { supabase } from './supabase';
-
 export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ setPage }) => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -132,6 +137,32 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    if (!isValidName(formData.name)) {
+      setError('Invalid name. Must be 2-50 characters.');
+      setLoading(false);
+      return;
+    }
+    if (!isValidPhone(formData.number)) {
+      setError('Invalid phone number format.');
+      setLoading(false);
+      return;
+    }
+    if (!isValidEmail(formData.email)) {
+      setError('Invalid email address.');
+      setLoading(false);
+      return;
+    }
+    if (!isValidLinkedIn(formData.linkedin)) {
+      setError('Invalid LinkedIn URL. Must contain linkedin.com/in/');
+      setLoading(false);
+      return;
+    }
+    if (!isValidGitHub(formData.github)) {
+      setError('Invalid GitHub URL. Must contain github.com/');
+      setLoading(false);
+      return;
+    }
 
     try {
       const { error: dbError } = await supabase
