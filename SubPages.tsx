@@ -115,6 +115,7 @@ export const PlaceholderPage: React.FC<{ name: string }> = ({ name }) => (
 );
 
 import { supabase } from './supabase';
+import { validateJoinForm } from './validation';
 
 export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ setPage }) => {
   const [submitted, setSubmitted] = useState(false);
@@ -132,6 +133,13 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    const validationError = validateJoinForm(formData);
+    if (validationError) {
+      setError(validationError);
+      setLoading(false);
+      return;
+    }
 
     try {
       const { error: dbError } = await supabase
