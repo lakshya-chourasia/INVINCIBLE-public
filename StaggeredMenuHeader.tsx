@@ -32,6 +32,15 @@ export const StaggeredMenuHeader: React.FC<StaggeredMenuHeaderProps> = ({
       <div 
         className="sm-logo liquid-glass" 
         onClick={onLogoClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onLogoClick();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label="Go to home"
         data-glitch={open || undefined}
       >
         <Command className="sm-logo-icon" />
@@ -39,7 +48,11 @@ export const StaggeredMenuHeader: React.FC<StaggeredMenuHeaderProps> = ({
       </div>
       
       <div className="sm-header-actions">
-        <button className="sm-join-btn liquid-glass purple-liquid-glass" onClick={onJoinClick}>
+        <button
+          className="sm-join-btn liquid-glass purple-liquid-glass"
+          onClick={onJoinClick}
+          aria-label="Join Collective"
+        >
           <UserPlus className="w-3 h-3 mr-2" />
           JOIN_COLLECTIVE
         </button>
@@ -49,6 +62,7 @@ export const StaggeredMenuHeader: React.FC<StaggeredMenuHeaderProps> = ({
           className="sm-toggle liquid-glass"
           onClick={toggleMenu}
           aria-expanded={open}
+          aria-label={open ? "Close menu" : "Open menu"}
         >
           <span className="sm-toggle-textWrap">
             <span ref={textInnerRef} className="sm-toggle-textInner">
