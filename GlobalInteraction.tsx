@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 export const GlobalInteraction: React.FC = () => {
@@ -8,25 +7,33 @@ export const GlobalInteraction: React.FC = () => {
   const ringX = useSpring(cursorX, { damping: 40, stiffness: 150 });
   const ringY = useSpring(cursorY, { damping: 40, stiffness: 150 });
   const [isClickable, setIsClickable] = useState(false);
+  const glowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let rafId: number;
     let mouseX = -100;
     let mouseY = -100;
+    let mouseTarget: HTMLElement | null = null;
 
     const move = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
+      mouseTarget = e.target as HTMLElement;
 
       // Throttle using requestAnimationFrame
       if (!rafId) {
         rafId = requestAnimationFrame(() => {
           cursorX.set(mouseX);
           cursorY.set(mouseY);
-          document.documentElement.style.setProperty('--x', `${mouseX}px`);
-          document.documentElement.style.setProperty('--y', `${mouseY}px`);
-          const target = document.elementFromPoint(mouseX, mouseY) as HTMLElement;
-          setIsClickable(!!target?.closest('button, a, .interactive, input, .sm-toggle, .sm-resize-handle, .sm-logo'));
+
+          // Optimization: Update CSS variables only on the specific element to avoid global style recalc
+          if (glowRef.current) {
+            glowRef.current.style.setProperty('--x', `${mouseX}px`);
+            glowRef.current.style.setProperty('--y', `${mouseY}px`);
+          }
+
+          // Optimization: Use event target directly instead of elementFromPoint (avoids reflow)
+          setIsClickable(!!mouseTarget?.closest('button, a, .interactive, input, .sm-toggle, .sm-resize-handle, .sm-logo'));
           rafId = 0;
         });
       }
@@ -42,7 +49,7 @@ export const GlobalInteraction: React.FC = () => {
   return (
     <>
       <div className="noise-overlay" />
-      <div className="global-glow" />
+      <div ref={glowRef} className="global-glow" />
       <motion.div className="custom-cursor" style={{ x: cursorX, y: cursorY, translateX: '-50%', translateY: '-50%' }} />
       <motion.div
         className="cursor-ring"
