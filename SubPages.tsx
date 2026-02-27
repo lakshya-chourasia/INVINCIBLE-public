@@ -115,6 +115,7 @@ export const PlaceholderPage: React.FC<{ name: string }> = ({ name }) => (
 );
 
 import { supabase } from './supabase';
+import { validateJoinForm } from './validation';
 
 export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ setPage }) => {
   const [submitted, setSubmitted] = useState(false);
@@ -133,16 +134,31 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
     setLoading(true);
     setError(null);
 
+    // Validate Input
+    const validation = validateJoinForm({
+      name: formData.name,
+      phone: formData.number,
+      email: formData.email,
+      linkedin: formData.linkedin,
+      github: formData.github
+    });
+
+    if (!validation.isValid) {
+      setError(validation.error || 'Invalid form data');
+      setLoading(false);
+      return;
+    }
+
     try {
       const { error: dbError } = await supabase
         .from('members')
         .insert([
           {
-            name: formData.name,
-            phone: formData.number,
-            email: formData.email,
-            linkedin: formData.linkedin,
-            github: formData.github
+            name: formData.name.trim(),
+            phone: formData.number.trim(),
+            email: formData.email.trim(),
+            linkedin: formData.linkedin.trim(),
+            github: formData.github.trim()
           }
         ]);
 
