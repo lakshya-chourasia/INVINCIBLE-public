@@ -29,14 +29,15 @@ export const StaggeredMenuHeader: React.FC<StaggeredMenuHeaderProps> = ({
 }) => {
   return (
     <header className="staggered-menu-header">
-      <div 
+      <button
         className="sm-logo liquid-glass" 
         onClick={onLogoClick}
         data-glitch={open || undefined}
+        aria-label="Home"
       >
-        <Command className="sm-logo-icon" />
+        <Command className="sm-logo-icon" aria-hidden="true" />
         <span className="ml-3 text-[10px] font-black uppercase tracking-[0.4em] text-white hidden sm:inline">Invincible_v2</span>
-      </div>
+      </button>
       
       <div className="sm-header-actions">
         <button className="sm-join-btn liquid-glass purple-liquid-glass" onClick={onJoinClick}>
