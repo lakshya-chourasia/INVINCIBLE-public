@@ -1,0 +1,3 @@
+## 2025-03-05 - Avoid layout thrashing on mousemove
+**Learning:** Calling `document.elementFromPoint` in high-frequency events (like `mousemove` combined with `requestAnimationFrame`) forces a synchronous layout reflow which can tank UI performance, especially alongside continuous CSS variable updates on `document.documentElement` for dynamic glows.
+**Action:** Use `e.target` instead of `document.elementFromPoint` to get the element underneath the cursor without forced reflow. Target CSS variables to specific element `ref`s (e.g. `glowRef.current.style.setProperty`) rather than `document.documentElement.style.setProperty` to restrict the scope of style recalculations.
