@@ -13,20 +13,28 @@ export const GlobalInteraction: React.FC = () => {
     let rafId: number;
     let mouseX = -100;
     let mouseY = -100;
+    let targetElement: HTMLElement | null = null;
 
     const move = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
+      targetElement = e.target as HTMLElement;
 
       // Throttle using requestAnimationFrame
       if (!rafId) {
         rafId = requestAnimationFrame(() => {
           cursorX.set(mouseX);
           cursorY.set(mouseY);
+
           document.documentElement.style.setProperty('--x', `${mouseX}px`);
           document.documentElement.style.setProperty('--y', `${mouseY}px`);
-          const target = document.elementFromPoint(mouseX, mouseY) as HTMLElement;
-          setIsClickable(!!target?.closest('button, a, .interactive, input, .sm-toggle, .sm-resize-handle, .sm-logo'));
+
+          // ⚡ Bolt Optimization: Replaced document.elementFromPoint(mouseX, mouseY)
+          // with e.target (targetElement) from the MouseEvent.
+          // elementFromPoint forces synchronous layout recalculation (thrashing)
+          // which is a massive performance bottleneck when called inside requestAnimationFrame
+          // on every mouse move. Using e.target achieves the same result with zero layout cost.
+          setIsClickable(!!targetElement?.closest?.('button, a, .interactive, input, .sm-toggle, .sm-resize-handle, .sm-logo'));
           rafId = 0;
         });
       }
