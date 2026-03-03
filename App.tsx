@@ -4,6 +4,7 @@ import { Terminal } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { globalStyles } from './styles';
 import { GlobalInteraction } from './GlobalInteraction';
+import { ChatBot } from './ChatBot';
 import { LetterGlitch } from './LetterGlitch';
 import { Home, PlaceholderPage, JoinCollective } from './SubPages';
 
@@ -49,6 +50,7 @@ export default function App() {
       <style>{globalStyles}</style>
 
       <LetterGlitch />
+      <ChatBot />
       <GlobalInteraction />
 
       <Suspense fallback={<div />}>

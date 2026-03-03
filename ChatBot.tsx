@@ -116,7 +116,9 @@ export const ChatBot: React.FC = () => {
             whileHover={{ scale: 1.1, translateY: -4 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsOpen(true)}
-            className="w-14 h-14 md:w-16 md:h-16 rounded-full liquid-glass purple-liquid-glass flex items-center justify-center text-white shadow-2xl"
+            aria-label="Open Collective AI Chat"
+            title="Open Collective AI Chat"
+            className="w-14 h-14 md:w-16 md:h-16 rounded-full liquid-glass purple-liquid-glass flex items-center justify-center text-white shadow-2xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:ring-[#5227FF]"
           >
             <Sparkles className="w-6 h-6 md:w-8 md:h-8" />
           </motion.button>
@@ -149,14 +151,18 @@ export const ChatBot: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button 
                   onClick={() => setIsPro(!isPro)}
-                  className={`flex items-center gap-1.5 md:gap-2 px-2.5 py-1 md:px-3 md:py-1.5 rounded-full border transition-all duration-300 ${isPro ? 'bg-[#5227FF]/20 border-[#5227FF]/50 text-white' : 'bg-white/5 border-white/10 text-zinc-500'}`}
+                  aria-label={`Toggle AI model to ${isPro ? 'Flash' : 'Pro'}`}
+                  title={`Switch to ${isPro ? 'Flash (Low Latency)' : 'Pro (Complex Reasoning)'} model`}
+                  className={`flex items-center gap-1.5 md:gap-2 px-2.5 py-1 md:px-3 md:py-1.5 rounded-full border transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[#5227FF] ${isPro ? 'bg-[#5227FF]/20 border-[#5227FF]/50 text-white' : 'bg-white/5 border-white/10 text-zinc-500'}`}
                 >
                   {isPro ? <BrainCircuit className="w-2.5 h-2.5 md:w-3 md:h-3" /> : <Zap className="w-2.5 h-2.5 md:w-3 md:h-3" />}
                   <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest">{isPro ? 'Pro' : 'Flash'}</span>
                 </button>
                 <button 
                   onClick={() => setIsOpen(false)}
-                  className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors"
+                  aria-label="Close chat"
+                  title="Close chat"
+                  className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-[#5227FF]"
                 >
                   <X className="w-4 h-4 text-zinc-400" />
                 </button>
@@ -204,12 +210,15 @@ export const ChatBot: React.FC = () => {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                   placeholder="Execute command..."
-                  className="w-full bg-white/5 border border-white/10 rounded-full py-3 md:py-4 pl-5 md:pl-6 pr-14 md:pr-16 text-[11px] md:text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-[#5227FF]/50 transition-all"
+                  aria-label="Chat input message"
+                  className="w-full bg-white/5 border border-white/10 rounded-full py-3 md:py-4 pl-5 md:pl-6 pr-14 md:pr-16 text-[11px] md:text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-[#5227FF] focus-visible:ring-1 focus-visible:ring-[#5227FF] transition-all"
                 />
                 <button 
                   onClick={handleSend}
                   disabled={isLoading || !input.trim()}
-                  className="absolute right-1.5 w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#5227FF] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100"
+                  aria-label="Send message"
+                  title={!input.trim() ? "Type a message to send" : "Send message (Enter)"}
+                  className="absolute right-1.5 w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#5227FF] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#5227FF]"
                 >
                   <Send className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 </button>
