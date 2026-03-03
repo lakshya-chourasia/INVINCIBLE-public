@@ -1,0 +1,4 @@
+## 2024-11-20 - [Information Leakage in Frontend Database Operations]
+**Vulnerability:** Frontend catch blocks handling Supabase interactions were exposing raw database error strings to the user interface (`err.message`), potentially leaking sensitive schema details or database state.
+**Learning:** Raw backend exceptions should never bubble up to the frontend UI.
+**Prevention:** Always use generic, user-friendly error messages in catch blocks that interface with backend/database operations. Catch errors as `unknown` type in TypeScript to enforce type checking and avoid implicit access to `err.message`.
