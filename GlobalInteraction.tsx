@@ -17,6 +17,8 @@ export const GlobalInteraction: React.FC = () => {
     const move = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
+      // Capture target before rAF to avoid document.elementFromPoint layout thrashing
+      const target = e.target as HTMLElement;
 
       // Throttle using requestAnimationFrame
       if (!rafId) {
@@ -25,7 +27,6 @@ export const GlobalInteraction: React.FC = () => {
           cursorY.set(mouseY);
           document.documentElement.style.setProperty('--x', `${mouseX}px`);
           document.documentElement.style.setProperty('--y', `${mouseY}px`);
-          const target = document.elementFromPoint(mouseX, mouseY) as HTMLElement;
           setIsClickable(!!target?.closest('button, a, .interactive, input, .sm-toggle, .sm-resize-handle, .sm-logo'));
           rafId = 0;
         });
