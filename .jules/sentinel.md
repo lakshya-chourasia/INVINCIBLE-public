@@ -1,0 +1,4 @@
+## 2024-05-18 - [Information Leakage from Backend Exceptions]
+**Vulnerability:** Raw backend/database error messages (e.g., Supabase constraint violations) were exposed via `console.error` and in client UI logic (`err.message`), allowing potential leakage of database schema and internal configuration.
+**Learning:** This codebase operates a client-heavy Vite app, meaning all logic runs on the frontend. Allowing backend APIs like Supabase to bubble their detailed error objects directly up to client `catch` blocks creates a direct path for sensitive schema leakage.
+**Prevention:** Always cast caught exceptions to `unknown` instead of `any`, remove detailed client-side logging (`console.error`), and display strict, generic error messages to the user to prevent internal details from being exposed.
