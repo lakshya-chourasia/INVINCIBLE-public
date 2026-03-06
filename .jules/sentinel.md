@@ -1,0 +1,4 @@
+## 2026-03-06 - [Information Leakage in Frontend Catch Blocks]
+**Vulnerability:** Raw backend/database error strings and full error objects were being logged directly to the client console (`console.error`) and bubbled up into the UI (`err.message`). This poses an information leakage risk as it could expose database schema details, stack traces, or other sensitive internals directly to the client.
+**Learning:** In frontend catch blocks that handle backend API or database operations, it is critical to sanitize the error context. Even local developer tools are a boundary, and any exposed internal traces can provide attackers with intelligence regarding backend structure.
+**Prevention:** Always use `unknown` (instead of `any`) in catch block parameters. Replace actual backend error strings and objects in logging statements with generic, secure error messages (`"Operation failed"`), and provide unified, sanitized messages back to the UI state.

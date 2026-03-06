@@ -92,8 +92,9 @@ export const ChatBot: React.FC = () => {
         content: responseText,
         timestamp: Date.now()
       }]);
-    } catch (error) {
-      console.error('Gemini error:', error);
+    } catch (error: unknown) {
+      // 🛡️ Sentinel: Prevent internal error leakage to DevTools
+      console.error('Gemini error: Operation failed');
       setMessages(prev => [...prev, {
         id: Math.random().toString(36),
         role: 'assistant',
