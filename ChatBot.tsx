@@ -92,8 +92,8 @@ export const ChatBot: React.FC = () => {
         content: responseText,
         timestamp: Date.now()
       }]);
-    } catch (error) {
-      console.error('Gemini error:', error);
+    } catch {
+      // Security: Do not expose raw API errors or request context details to the client
       setMessages(prev => [...prev, {
         id: Math.random().toString(36),
         role: 'assistant',
