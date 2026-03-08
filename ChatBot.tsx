@@ -33,7 +33,7 @@ export const ChatBot: React.FC = () => {
   }, [messages, isLoading]);
 
   const handleSend = async () => {
-    const apiKey = (window as any).process?.env?.API_KEY || '';
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
     if (!input.trim() || isLoading || !apiKey) {
       if (!apiKey) {
         setMessages(prev => [...prev, {
@@ -92,8 +92,7 @@ export const ChatBot: React.FC = () => {
         content: responseText,
         timestamp: Date.now()
       }]);
-    } catch (error) {
-      console.error('Gemini error:', error);
+    } catch (error: unknown) {
       setMessages(prev => [...prev, {
         id: Math.random().toString(36),
         role: 'assistant',
