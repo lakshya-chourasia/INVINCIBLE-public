@@ -1,0 +1,3 @@
+## 2024-05-14 - GlobalInteraction target thrashing
+**Learning:** For mouse interaction logic, using `event.target` is preferred over `document.elementFromPoint()` to avoid layout thrashing. In high-frequency event listeners using `requestAnimationFrame` (e.g., `mousemove` events in React components), state variables like the event `target` must be declared in the outer `useEffect` scope alongside tracking coordinates to avoid stale closure traps within the animation callback.
+**Action:** Replace `document.elementFromPoint` with tracking `e.target` directly in `mousemove` event listeners, especially inside `requestAnimationFrame` loops.
