@@ -4,6 +4,22 @@ import { motion } from 'framer-motion';
 import { Code, Users, Rocket, Zap, ChevronRight, Terminal, UserPlus, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { SpotlightCard } from './SpotlightCard';
 
+// ⚡ Bolt: Hoist static configuration objects and arrays out of the component
+// to prevent allocating new object identities on every re-render and reduce GC pressure.
+const STATISTICS = [
+  { label: 'Active_Nodes', val: '45.2k', icon: <Users className="w-4 h-4 md:w-6 md:h-6" /> },
+  { label: 'Deployed_Src', val: '8.4k', icon: <Rocket className="w-4 h-4 md:w-6 md:h-6" /> },
+  { label: 'Functions', val: '12.5k', icon: <Code className="w-4 h-4 md:w-6 md:h-6" /> },
+  { label: 'Core_Uptime', val: '99.9%', icon: <Zap className="w-4 h-4 md:w-6 md:h-6" /> }
+];
+
+const FEED_POSTS = [
+  { title: "React 19 Server Components deep dive", author: "SarahDev", meta: "42 replies", tag: "React" },
+  { title: "Building a Rust-based OS for embedded", author: "KernelMind", meta: "15 replies", tag: "Rust" },
+  { title: "Is Mojo really faster than Python for AI?", author: "DataSage", meta: "128 replies", tag: "AI/ML" },
+  { title: "Optimizing WebGL for mobile performance", author: "GfxWizard", meta: "31 replies", tag: "Web Graphics" }
+];
+
 export const Home: React.FC<{ setPage: (p: string) => void }> = ({ setPage }) => (
   <article className="space-y-12 md:space-y-32">
     {/* Hero Section */}
@@ -38,12 +54,7 @@ export const Home: React.FC<{ setPage: (p: string) => void }> = ({ setPage }) =>
 
     {/* Statistics Grid */}
     <section className="max-w-7xl mx-auto px-4 md:px-6 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-      {[
-        { label: 'Active_Nodes', val: '45.2k', icon: <Users className="w-4 h-4 md:w-6 md:h-6" /> },
-        { label: 'Deployed_Src', val: '8.4k', icon: <Rocket className="w-4 h-4 md:w-6 md:h-6" /> },
-        { label: 'Functions', val: '12.5k', icon: <Code className="w-4 h-4 md:w-6 md:h-6" /> },
-        { label: 'Core_Uptime', val: '99.9%', icon: <Zap className="w-4 h-4 md:w-6 md:h-6" /> }
-      ].map((s, i) => (
+      {STATISTICS.map((s, i) => (
         <SpotlightCard key={i} className="py-4 md:py-10" label={`node_${i}`}>
           <div className="space-y-2 md:space-y-4">
             <div className="text-zinc-500">{s.icon}</div>
@@ -70,12 +81,7 @@ export const Home: React.FC<{ setPage: (p: string) => void }> = ({ setPage }) =>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {[
-          { title: "React 19 Server Components deep dive", author: "SarahDev", meta: "42 replies", tag: "React" },
-          { title: "Building a Rust-based OS for embedded", author: "KernelMind", meta: "15 replies", tag: "Rust" },
-          { title: "Is Mojo really faster than Python for AI?", author: "DataSage", meta: "128 replies", tag: "AI/ML" },
-          { title: "Optimizing WebGL for mobile performance", author: "GfxWizard", meta: "31 replies", tag: "Web Graphics" }
-        ].map((t, i) => (
+        {FEED_POSTS.map((t, i) => (
           <div
             key={i}
             className="group bg-zinc-900/40 p-5 md:p-10 hover:bg-zinc-950 transition-all cursor-pointer border border-zinc-900 rounded-[24px] md:rounded-[48px] flex flex-col h-full"
