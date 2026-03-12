@@ -225,6 +225,8 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [closeOnClickAway, open, closeMenu]);
 
+  const rafIdRef = useRef<number | null>(null);
+
   const startResizing = useCallback(() => {
     isResizingRef.current = true;
     setIsResizing(true);
@@ -237,14 +239,31 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     setIsResizing(false);
     document.body.style.cursor = '';
     document.body.style.userSelect = '';
+    if (rafIdRef.current) {
+      cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = null;
+    }
   }, []);
+
+  // ⚡ Bolt: Throttles resize events using requestAnimationFrame to prevent excessive React state updates
+  // and layout thrashing during high-frequency mousemove events. Evaluating the latest coordinate reduces lag.
+  const latestMouseX = useRef<number | null>(null);
 
   const resize = useCallback((e: MouseEvent) => {
     if (!isResizingRef.current) return;
-    let newWidth = position === 'right' ? window.innerWidth - e.clientX : e.clientX;
-    const minWidth = 340;
-    const maxWidth = window.innerWidth * 0.8;
-    if (newWidth >= minWidth && newWidth <= maxWidth) setPanelWidth(newWidth);
+    latestMouseX.current = e.clientX;
+
+    if (rafIdRef.current) return;
+
+    rafIdRef.current = requestAnimationFrame(() => {
+      if (latestMouseX.current !== null) {
+        let newWidth = position === 'right' ? window.innerWidth - latestMouseX.current : latestMouseX.current;
+        const minWidth = 340;
+        const maxWidth = window.innerWidth * 0.8;
+        if (newWidth >= minWidth && newWidth <= maxWidth) setPanelWidth(newWidth);
+      }
+      rafIdRef.current = null;
+    });
   }, [position]);
 
   useEffect(() => {
