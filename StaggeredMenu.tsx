@@ -71,6 +71,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   const [panelWidth, setPanelWidth] = useState(400);
   const [isResizing, setIsResizing] = useState(false);
   const isResizingRef = useRef(false);
+  const resizeRafRef = useRef<number | null>(null);
 
   const openTlRef = useRef<gsap.core.Timeline | null>(null);
   const closeTweenRef = useRef<gsap.core.Tween | null>(null);
@@ -237,14 +238,24 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     setIsResizing(false);
     document.body.style.cursor = '';
     document.body.style.userSelect = '';
+    if (resizeRafRef.current !== null) {
+      cancelAnimationFrame(resizeRafRef.current);
+      resizeRafRef.current = null;
+    }
   }, []);
 
   const resize = useCallback((e: MouseEvent) => {
     if (!isResizingRef.current) return;
-    let newWidth = position === 'right' ? window.innerWidth - e.clientX : e.clientX;
-    const minWidth = 340;
-    const maxWidth = window.innerWidth * 0.8;
-    if (newWidth >= minWidth && newWidth <= maxWidth) setPanelWidth(newWidth);
+    if (resizeRafRef.current !== null) return;
+
+    // Throttle mousemove events with requestAnimationFrame to prevent excessive re-renders and layout thrashing
+    resizeRafRef.current = requestAnimationFrame(() => {
+      let newWidth = position === 'right' ? window.innerWidth - e.clientX : e.clientX;
+      const minWidth = 340;
+      const maxWidth = window.innerWidth * 0.8;
+      if (newWidth >= minWidth && newWidth <= maxWidth) setPanelWidth(newWidth);
+      resizeRafRef.current = null;
+    });
   }, [position]);
 
   useEffect(() => {
@@ -253,6 +264,10 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     return () => {
       window.removeEventListener('mousemove', resize);
       window.removeEventListener('mouseup', stopResizing);
+      if (resizeRafRef.current !== null) {
+        cancelAnimationFrame(resizeRafRef.current);
+        resizeRafRef.current = null;
+      }
     };
   }, [resize, stopResizing]);
 
