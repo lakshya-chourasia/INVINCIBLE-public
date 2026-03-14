@@ -1,0 +1,4 @@
+## 2026-03-14 - Prevent Information Leakage in Supabase Error Handling
+**Vulnerability:** Frontend catch blocks handling database operations (like Supabase inserts) were exposing raw `err.message` strings directly to the user interface, potentially leaking internal database schema details, constraints, or connection strings.
+**Learning:** Returning dynamic error messages directly from third-party APIs or databases to the UI is an anti-pattern that violates the principle of failing securely. The codebase convention also explicitly expects `catch (err: unknown)` rather than `catch (err: any)`.
+**Prevention:** Always use `catch (err: unknown)`, log the full error details internally (e.g., via `console.error` or a secure logging service) for debugging, and return a sanitized, static generic error message to the user that does not expose system internals.
