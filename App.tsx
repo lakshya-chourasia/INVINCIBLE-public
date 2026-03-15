@@ -1,3 +1,5 @@
+import { ChatBot } from "./ChatBot";
+
 
 import React, { useState, useMemo, Suspense, lazy } from 'react';
 import { Terminal } from 'lucide-react';
@@ -52,6 +54,7 @@ export default function App() {
       <GlobalInteraction />
 
       <Suspense fallback={<div />}>
+      <ChatBot />
         <StaggeredMenu
           position="right"
           items={menuItems}
