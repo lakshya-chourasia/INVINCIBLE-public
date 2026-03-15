@@ -1,0 +1,3 @@
+## 2024-03-15 - Remove layout thrashing from global cursor tracking
+**Learning:** Using `document.elementFromPoint(mouseX, mouseY)` inside a high-frequency event listener (like `requestAnimationFrame` for `mousemove` events) forces synchronous layout recalculation in the browser. In applications with global custom cursors and 60fps animations, this causes severe layout thrashing and frame drops.
+**Action:** Instead of querying the DOM by coordinates, cache `e.target` from the original event object and use it inside the throttled callback. Since the cursor overlays typically have `pointer-events: none`, `e.target` provides the correct underlying element without forcing a layout recalculation.
