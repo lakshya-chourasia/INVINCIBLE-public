@@ -68,7 +68,9 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   const toggleBtnRef = useRef<HTMLButtonElement>(null);
   const [textLines, setTextLines] = useState(['MENU', 'CLOSE']);
 
-  const [panelWidth, setPanelWidth] = useState(400);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const panelWidthRef = useRef(400);
+  const rafIdRef = useRef<number>(0);
   const [isResizing, setIsResizing] = useState(false);
   const isResizingRef = useRef(false);
 
@@ -241,10 +243,27 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
   const resize = useCallback((e: MouseEvent) => {
     if (!isResizingRef.current) return;
-    let newWidth = position === 'right' ? window.innerWidth - e.clientX : e.clientX;
-    const minWidth = 340;
-    const maxWidth = window.innerWidth * 0.8;
-    if (newWidth >= minWidth && newWidth <= maxWidth) setPanelWidth(newWidth);
+
+    if (rafIdRef.current) {
+      cancelAnimationFrame(rafIdRef.current);
+    }
+
+    // ⚡ Bolt: Optimize high-frequency mousemove events by bypassing React state.
+    // Instead of using setPanelWidth, we use a ref and update the CSS variable directly.
+    // This prevents expensive layout thrashing and re-renders during the drag action.
+    rafIdRef.current = requestAnimationFrame(() => {
+      let newWidth = position === 'right' ? window.innerWidth - e.clientX : e.clientX;
+      const minWidth = 340;
+      const maxWidth = window.innerWidth * 0.8;
+
+      if (newWidth >= minWidth && newWidth <= maxWidth) {
+        panelWidthRef.current = newWidth;
+        if (wrapperRef.current) {
+          wrapperRef.current.style.setProperty('--sm-panel-width', `${newWidth}px`);
+        }
+      }
+      rafIdRef.current = 0;
+    });
   }, [position]);
 
   useEffect(() => {
@@ -258,8 +277,9 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
   return (
     <div
+      ref={wrapperRef}
       className={`${className} staggered-menu-wrapper ${isFixed ? 'fixed-wrapper' : ''}`}
-      style={{ '--sm-accent': accentColor, '--sm-panel-width': `${panelWidth}px` } as React.CSSProperties}
+      style={{ '--sm-accent': accentColor, '--sm-panel-width': `${panelWidthRef.current}px` } as React.CSSProperties}
       data-position={position}
       data-open={open || undefined}
     >
