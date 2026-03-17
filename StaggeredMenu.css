@@ -386,3 +386,13 @@
   color: #fff;
   transform: translateX(5px);
 }
+
+/* Accessibility: Focus visible outline for keyboard navigation */
+.sm-logo:focus-visible,
+.sm-join-btn:focus-visible,
+.sm-toggle:focus-visible,
+.sm-panel-item:focus-visible,
+.sm-socials-link:focus-visible {
+  outline: 2px solid var(--sm-accent, #5227FF);
+  outline-offset: 4px;
+}
