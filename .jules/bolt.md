@@ -1,0 +1,3 @@
+## 2024-03-18 - Avoid Layout Thrashing in Global Mousemove Listener
+**Learning:** `document.elementFromPoint` forces a synchronous layout calculation (layout thrashing) which is extremely expensive. Using it inside a high-frequency event listener like `mousemove` via `requestAnimationFrame` significantly drops frame rate and increases main-thread blocking time.
+**Action:** Use the cached event target (`e.target`) from the raw `mousemove` event instead of repeatedly querying coordinates to look up the element. Ensure `pointer-events: none` on global overlay layers (like noise and cursors) so that `e.target` hits the correct underlying interactive element.
