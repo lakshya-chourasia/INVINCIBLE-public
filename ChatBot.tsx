@@ -2,7 +2,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Send, X, Bot, Zap, BrainCircuit, Terminal } from 'lucide-react';
-import { GoogleGenAI } from '@google/genai';
 
 type Message = {
   id: string;
@@ -33,16 +32,7 @@ export const ChatBot: React.FC = () => {
   }, [messages, isLoading]);
 
   const handleSend = async () => {
-    const apiKey = (window as any).process?.env?.API_KEY || '';
-    if (!input.trim() || isLoading || !apiKey) {
-      if (!apiKey) {
-        setMessages(prev => [...prev, {
-          id: Math.random().toString(36),
-          role: 'assistant',
-          content: 'Error: API Key not found in environment. Please check your configuration.',
-          timestamp: Date.now()
-        }]);
-      }
+    if (!input.trim() || isLoading) {
       return;
     }
 
@@ -58,33 +48,23 @@ export const ChatBot: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey });
-      const modelName = isPro ? 'gemini-3-pro-preview' : 'gemini-3-flash-preview';
-      
-      const response = await ai.models.generateContent({
-        model: modelName,
-        contents: userMessage.content,
-        config: {
-          systemInstruction: `You are the Invincible Collective AI Assistant, the primary intelligence node for the 'Invincible_Collective' platform.
-          
-          SITE KNOWLEDGE & USER GUIDANCE:
-          1. Home: The central hub for node initialization.
-          2. Dev Forum: A real-time stream for repository telemetry and deep technical discussions.
-          3. Source Projects: The 'src' repository containing deployed legacy code.
-          4. Resources: The 'bin' directory for engineering assets.
-          5. Members: Active 'usr' nodes currently synchronized with the collective.
-          6. Dashboard: The 'etc' control panel for deployment management.
-          
-          STATS: 45,200 active nodes, 8,420 deployed projects, 12.5k core functions.
-          
-          TONE & STYLE:
-          - Futuristic, technical, high-performance, and binary-themed.
-          - Use engineer-slang: 'pushing to prod', 'merging intelligence', 'node sync', 'latency optimization'.
-          - Current Mode: ${isPro ? 'Pro (Complex Reasoning)' : 'Flash (Low Latency)'}.`
-        }
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: userMessage.content,
+          isPro
+        })
       });
 
-      const responseText = response.text || 'Error: Connection lost in the subnet.';
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      const responseText = data.text || 'Error: Connection lost in the subnet.';
 
       setMessages(prev => [...prev, {
         id: Math.random().toString(36),
@@ -93,7 +73,7 @@ export const ChatBot: React.FC = () => {
         timestamp: Date.now()
       }]);
     } catch (error) {
-      console.error('Gemini error:', error);
+      console.error('Chat error:', error);
       setMessages(prev => [...prev, {
         id: Math.random().toString(36),
         role: 'assistant',
