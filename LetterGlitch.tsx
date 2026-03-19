@@ -72,15 +72,6 @@ export const LetterGlitch: React.FC = () => {
               ctx.fillText(cell.char, i * fontSize, j * fontSize);
             }
           }
-
-          // Refined radial gradient for better central visibility
-          ctx.globalAlpha = 1;
-          const grad = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.max(w, h) * 0.8);
-          grad.addColorStop(0, 'rgba(0,0,0,0.85)');
-          grad.addColorStop(0.4, 'rgba(0,0,0,0.4)');
-          grad.addColorStop(1, 'rgba(0,0,0,0.1)');
-          ctx.fillStyle = grad;
-          ctx.fillRect(0, 0, w, h);
         }
       }
 
@@ -101,10 +92,23 @@ export const LetterGlitch: React.FC = () => {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 z-0 pointer-events-none"
-      style={{ opacity: 0.8 }}
-    />
+    <>
+      <canvas
+        ref={canvasRef}
+        className="fixed inset-0 z-0 pointer-events-none"
+        style={{ opacity: 0.8 }}
+      />
+      {/*
+        ⚡ BOLT OPTIMIZATION:
+        Moved the radial gradient from an expensive per-frame canvas fillRect
+        to a static hardware-accelerated CSS background div.
+      */}
+      <div
+        className="fixed inset-0 z-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.1) 100%)'
+        }}
+      />
+    </>
   );
 };
