@@ -31,10 +31,19 @@ export const StaggeredMenuHeader: React.FC<StaggeredMenuHeaderProps> = ({
     <header className="staggered-menu-header">
       <div 
         className="sm-logo liquid-glass" 
+        role="button"
+        tabIndex={0}
+        aria-label="Homepage"
         onClick={onLogoClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onLogoClick();
+          }
+        }}
         data-glitch={open || undefined}
       >
-        <Command className="sm-logo-icon" />
+        <Command className="sm-logo-icon" aria-hidden="true" />
         <span className="ml-3 text-[10px] font-black uppercase tracking-[0.4em] text-white hidden sm:inline">Invincible_v2</span>
       </div>
       
