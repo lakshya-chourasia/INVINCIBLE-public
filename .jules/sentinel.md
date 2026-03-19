@@ -1,0 +1,4 @@
+## 2024-03-19 - Prevent Information Leakage in Frontend Catch Blocks
+**Vulnerability:** Raw database exception strings (`err.message`) were being bubbled up and displayed directly to the user in a UI error state inside `SubPages.tsx`, creating an information leakage risk.
+**Learning:** Frontend catch blocks handling backend/database operations (e.g., Supabase interactions) must display generic secure error messages instead of raw error strings, to prevent exposing database structure or internal telemetry. Additionally, using `unknown` instead of `any` for caught errors reinforces type safety.
+**Prevention:** Always use generic fallback strings for user-facing error states (e.g., `setError('Synchronization failed. Please check your credentials.')`) and ensure errors are securely logged to the console/logger rather than the UI. Always use `catch (err: unknown)` when capturing errors in TypeScript.
