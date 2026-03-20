@@ -32,7 +32,16 @@ export const StaggeredMenuHeader: React.FC<StaggeredMenuHeaderProps> = ({
       <div 
         className="sm-logo liquid-glass" 
         onClick={onLogoClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onLogoClick();
+          }
+        }}
         data-glitch={open || undefined}
+        role="button"
+        tabIndex={0}
+        aria-label="Home"
       >
         <Command className="sm-logo-icon" />
         <span className="ml-3 text-[10px] font-black uppercase tracking-[0.4em] text-white hidden sm:inline">Invincible_v2</span>
@@ -49,6 +58,7 @@ export const StaggeredMenuHeader: React.FC<StaggeredMenuHeaderProps> = ({
           className="sm-toggle liquid-glass"
           onClick={toggleMenu}
           aria-expanded={open}
+          aria-label={open ? "Close menu" : "Open menu"}
         >
           <span className="sm-toggle-textWrap">
             <span ref={textInnerRef} className="sm-toggle-textInner">
