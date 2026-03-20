@@ -2,7 +2,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Send, X, Bot, Zap, BrainCircuit, Terminal } from 'lucide-react';
-import { GoogleGenAI } from '@google/genai';
 
 type Message = {
   id: string;
@@ -33,18 +32,7 @@ export const ChatBot: React.FC = () => {
   }, [messages, isLoading]);
 
   const handleSend = async () => {
-    const apiKey = (window as any).process?.env?.API_KEY || '';
-    if (!input.trim() || isLoading || !apiKey) {
-      if (!apiKey) {
-        setMessages(prev => [...prev, {
-          id: Math.random().toString(36),
-          role: 'assistant',
-          content: 'Error: API Key not found in environment. Please check your configuration.',
-          timestamp: Date.now()
-        }]);
-      }
-      return;
-    }
+    if (!input.trim() || isLoading) return;
 
     const userMessage: Message = {
       id: Math.random().toString(36),
@@ -58,13 +46,12 @@ export const ChatBot: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey });
-      const modelName = isPro ? 'gemini-3-pro-preview' : 'gemini-3-flash-preview';
-      
-      const response = await ai.models.generateContent({
-        model: modelName,
-        contents: userMessage.content,
-        config: {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: userMessage.content,
+          isPro,
           systemInstruction: `You are the Invincible Collective AI Assistant, the primary intelligence node for the 'Invincible_Collective' platform.
           
           SITE KNOWLEDGE & USER GUIDANCE:
@@ -81,10 +68,12 @@ export const ChatBot: React.FC = () => {
           - Futuristic, technical, high-performance, and binary-themed.
           - Use engineer-slang: 'pushing to prod', 'merging intelligence', 'node sync', 'latency optimization'.
           - Current Mode: ${isPro ? 'Pro (Complex Reasoning)' : 'Flash (Low Latency)'}.`
-        }
+        })
       });
 
-      const responseText = response.text || 'Error: Connection lost in the subnet.';
+      if (!res.ok) throw new Error('Network response was not ok');
+      const data = await res.json();
+      const responseText = data.text || 'Error: Connection lost in the subnet.';
 
       setMessages(prev => [...prev, {
         id: Math.random().toString(36),
@@ -92,7 +81,7 @@ export const ChatBot: React.FC = () => {
         content: responseText,
         timestamp: Date.now()
       }]);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Gemini error:', error);
       setMessages(prev => [...prev, {
         id: Math.random().toString(36),

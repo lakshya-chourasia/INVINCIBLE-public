@@ -1,0 +1,4 @@
+## 2024-05-14 - Exposing Sensitive GEMINI_API_KEY to Client via Vite Define and Global Shim
+**Vulnerability:** The `GEMINI_API_KEY` was being explicitly defined as a global variable injected by Vite's `define` plugin in `vite.config.ts`, making it accessible and clearly visible in the frontend bundle. A shim in `index.html` also explicitly tried to assign it to `window.process.env.API_KEY`.
+**Learning:** Exposing server-side secrets directly to the client bundle through bundler configuration or global object shims completely compromises the secret, allowing any visitor to extract and use the API key.
+**Prevention:** Never inject secret API keys (like `GEMINI_API_KEY`) into the frontend build process using `define`, `VITE_*` prefix, or inline scripts. Always keep secret logic in a backend/serverless function (proxy) and have the frontend communicate with the proxy.
