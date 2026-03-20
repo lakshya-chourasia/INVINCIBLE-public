@@ -1,0 +1,3 @@
+## 2024-03-20 - GlobalInteraction mousemove bottleneck
+**Learning:** `GlobalInteraction` uses `document.elementFromPoint(mouseX, mouseY)` inside a high-frequency `requestAnimationFrame` loop (tied to `mousemove`). `elementFromPoint` forces a synchronous layout calculation (layout thrashing) which is expensive and degrades frame rate when the DOM is complex.
+**Action:** Replace `document.elementFromPoint(mouseX, mouseY)` with `e.target as HTMLElement` in the `mousemove` event handler, and capture it outside the RAF loop. This avoids forcing layout recalculations while achieving the exact same result (identifying the hovered element).
