@@ -200,8 +200,9 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
         <form onSubmit={handleSubmit} className="p-6 md:p-12 space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-2">
-              <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">usr_name*</label>
+              <label htmlFor="join_name" className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">usr_name*</label>
               <input
+                id="join_name"
                 required
                 disabled={loading}
                 type="text"
@@ -212,8 +213,9 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">comms_channel_id*</label>
+              <label htmlFor="join_number" className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">comms_channel_id*</label>
               <input
+                id="join_number"
                 required
                 disabled={loading}
                 type="tel"
@@ -224,8 +226,9 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">net_address*</label>
+              <label htmlFor="join_email" className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">net_address*</label>
               <input
+                id="join_email"
                 required
                 disabled={loading}
                 type="email"
@@ -236,8 +239,9 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">linkedin_node*</label>
+              <label htmlFor="join_linkedin" className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">linkedin_node*</label>
               <input
+                id="join_linkedin"
                 required
                 disabled={loading}
                 type="url"
@@ -248,8 +252,9 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
               />
             </div>
             <div className="space-y-2 md:col-span-2">
-              <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">github_node_optional</label>
+              <label htmlFor="join_github" className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">github_node_optional</label>
               <input
+                id="join_github"
                 disabled={loading}
                 type="url"
                 value={formData.github}
