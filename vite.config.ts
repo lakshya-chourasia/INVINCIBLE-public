@@ -10,10 +10,8 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',
     },
     plugins: [react()],
-    define: {
-      'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
-    },
+    // 🛡️ Sentinel Note: API keys removed from define to prevent bundle leakage.
+    // They must be accessed via import.meta.env or a secure backend.
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

@@ -33,7 +33,8 @@ export const ChatBot: React.FC = () => {
   }, [messages, isLoading]);
 
   const handleSend = async () => {
-    const apiKey = (window as any).process?.env?.API_KEY || '';
+    // 🛡️ Sentinel Note: The key should ideally be proxied through a backend to avoid exposing it.
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
     if (!input.trim() || isLoading || !apiKey) {
       if (!apiKey) {
         setMessages(prev => [...prev, {
