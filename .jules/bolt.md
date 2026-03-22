@@ -1,0 +1,3 @@
+## 2024-03-24 - [SpotlightCard hover tracking optimization]
+**Learning:** High-frequency events like \`onMouseMove\` in React can cause severe performance degradation (lag and high CPU usage) if they trigger state updates (\`useState\`) because they force React to re-render the entire component tree on every single pixel movement.
+**Action:** Use \`useRef\` to store DOM element references and manipulate their styles directly via the DOM API inside event handlers to bypass React's render cycle completely. This pattern is essential for smooth micro-interactions like tracking gradients or hover effects without throttling.
