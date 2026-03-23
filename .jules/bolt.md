@@ -1,0 +1,3 @@
+## 2024-03-24 - Layout Thrashing in Global Mouse Tracker
+**Learning:** Using `document.elementFromPoint` inside high-frequency `requestAnimationFrame` event loops forces a synchronous layout calculation (layout thrashing) every frame. When combined with overlays that have `pointer-events: none`, this is especially unnecessary since the original event target already represents the correct interactive element underneath.
+**Action:** Always capture `e.target` directly from the synchronous mouse event handler before passing it into an asynchronous `requestAnimationFrame` update function to determine UI state, rather than recalculating the targeted DOM node entirely.
