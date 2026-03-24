@@ -1,0 +1,3 @@
+## 2024-05-24 - [Avoid `document.elementFromPoint` in `requestAnimationFrame`]
+**Learning:** Using `document.elementFromPoint(x, y)` inside a high-frequency `requestAnimationFrame` loop (like a `mousemove` handler) triggers synchronous layout calculations. This causes severe layout thrashing and performance degradation, significantly impacting smooth interactions.
+**Action:** Always capture `e.target` directly from the event object within the listener. Cache it in an outer scope variable and use that cached reference inside the `requestAnimationFrame` callback instead of recalculating the hit-tested element.
