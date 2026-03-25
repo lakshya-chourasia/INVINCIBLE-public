@@ -1,0 +1,3 @@
+## 2025-03-09 - Ensure Form Field Labels are Associated with Inputs
+**Learning:** Custom styled forms that heavily modify default browser semantic structures, like the `JoinCollective` component, require explicit `id` and `htmlFor` attributes to properly associate inputs with their respective labels for screen reader accessibility. Otherwise, screen readers will fail to read the label text when the input is focused.
+**Action:** Always include explicitly defined `id` and `htmlFor` attributes for all form input labels, especially in highly customized interfaces where default nested structure (`<label><input /></label>`) isn't used.
