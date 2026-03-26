@@ -1,0 +1,3 @@
+## 2024-05-18 - Missing ID/For Attributes on Custom Form Elements
+**Learning:** In custom stylized forms, such as the `JoinCollective` component, the default semantic associations between labels and inputs are easily broken when relying purely on visual structure. Because default browser rendering is heavily modified or omitted, screen readers require explicit `id` on inputs and corresponding `htmlFor` on labels to correctly read input fields.
+**Action:** Always ensure that every custom `input` element is explicitly associated with its `label` using matching `id` and `htmlFor` attributes, avoiding reliance purely on DOM hierarchy or visual layout for accessibility.
