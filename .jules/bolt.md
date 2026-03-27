@@ -1,0 +1,3 @@
+## 2024-10-24 - [Avoid synchronous layout thrashing with document.elementFromPoint]
+**Learning:** Calling `document.elementFromPoint` inside high-frequency events (like `mousemove` via `requestAnimationFrame`) forces a synchronous layout recalculation/thrashing, severely degrading performance.
+**Action:** Instead of `document.elementFromPoint`, declare a scoped variable (e.g., `let eventTarget: HTMLElement | null = null;`) outside the `requestAnimationFrame` loop to track the interactive target via the `mousemove` event's `e.target` directly, and refer to it inside the animation callback.
