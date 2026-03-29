@@ -1,0 +1,3 @@
+## 2024-05-18 - Prevent layout thrashing in high-frequency events
+**Learning:** Calling `document.elementFromPoint` within high-frequency event listeners (like `mousemove` combined with `requestAnimationFrame`) forces synchronous layout recalculations, causing severe layout thrashing and performance degradation in the rendering pipeline.
+**Action:** Always prefer capturing and utilizing `e.target` directly from the original event payload instead of using `document.elementFromPoint`, taking care to explicitly manage state variables (e.g. tracking `eventTarget` in the outer scope) to prevent stale closure bugs inside `requestAnimationFrame` callbacks.
