@@ -247,6 +247,27 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     if (newWidth >= minWidth && newWidth <= maxWidth) setPanelWidth(newWidth);
   }, [position]);
 
+  const handleResizeKeyboard = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      const minWidth = 340;
+      const maxWidth = window.innerWidth * 0.8;
+      const step = 20;
+      let newWidth = panelWidth;
+
+      if (position === 'right') {
+        if (e.key === 'ArrowLeft') newWidth += step;
+        if (e.key === 'ArrowRight') newWidth -= step;
+      } else {
+        if (e.key === 'ArrowLeft') newWidth -= step;
+        if (e.key === 'ArrowRight') newWidth += step;
+      }
+
+      newWidth = Math.max(minWidth, Math.min(maxWidth, newWidth));
+      setPanelWidth(newWidth);
+    }
+  }, [panelWidth, position]);
+
   useEffect(() => {
     window.addEventListener('mousemove', resize);
     window.addEventListener('mouseup', stopResizing);
@@ -284,7 +305,9 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         panelRef={panelRef}
         open={open}
         onResizeStart={startResizing}
+        onResizeKeyboard={handleResizeKeyboard}
         isResizing={isResizing}
+        panelWidth={panelWidth}
         items={items}
         onItemClick={(it) => { onItemClick?.(it); closeMenu(); }}
         displayItemNumbering={displayItemNumbering}
