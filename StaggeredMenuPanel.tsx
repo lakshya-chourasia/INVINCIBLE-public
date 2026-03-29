@@ -15,7 +15,9 @@ interface StaggeredMenuPanelProps {
   panelRef: React.RefObject<HTMLDivElement | null>;
   open: boolean;
   onResizeStart: () => void;
+  onResizeKeyboard: (e: React.KeyboardEvent<HTMLDivElement>) => void;
   isResizing: boolean;
+  panelWidth: number;
   items: MenuItem[];
   onItemClick: (item: MenuItem) => void;
   displayItemNumbering: boolean;
@@ -27,7 +29,9 @@ export const StaggeredMenuPanel: React.FC<StaggeredMenuPanelProps> = ({
   panelRef,
   open,
   onResizeStart,
+  onResizeKeyboard,
   isResizing,
+  panelWidth,
   items,
   onItemClick,
   displayItemNumbering,
@@ -39,6 +43,13 @@ export const StaggeredMenuPanel: React.FC<StaggeredMenuPanelProps> = ({
       <div 
         className={`sm-resize-handle ${isResizing ? 'is-resizing' : ''}`}
         onMouseDown={onResizeStart}
+        role="slider"
+        aria-label="Resize menu"
+        aria-valuemin={340}
+        aria-valuemax={typeof window !== 'undefined' ? window.innerWidth * 0.8 : 1200}
+        aria-valuenow={panelWidth}
+        tabIndex={0}
+        onKeyDown={onResizeKeyboard}
       />
       <div className="sm-panel-inner">
         <ul className="sm-panel-list" role="list" data-numbering={displayItemNumbering || undefined}>
