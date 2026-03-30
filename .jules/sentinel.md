@@ -1,0 +1,4 @@
+## 2023-10-27 - [MEDIUM] Error Handling Information Leakage
+**Vulnerability:** The application was catching database errors (from Supabase inserts) and rendering the raw `err.message` directly into the UI state (`setError(err.message || ...)`). This risks exposing sensitive backend internals (like database schema details, constraints, or unique key violations) directly to end users.
+**Learning:** Defaulting to `catch (err: any)` and directly passing unknown error object properties to the UI is a common anti-pattern that leads to information leakage.
+**Prevention:** Always use `catch (err: unknown)` for type safety. Fail securely by displaying a generic, user-friendly error message to the client, while securely logging the actual `unknown` error structure to the server/console for debugging purposes.
