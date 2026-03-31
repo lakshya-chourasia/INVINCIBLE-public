@@ -20,7 +20,9 @@ export const LetterGlitch: React.FC = () => {
     let cols = Math.ceil(w / fontSize);
     let rows = Math.ceil(h / fontSize);
 
-    const generateGrid = () => Array(cols).fill(null).map(() => Array(rows).fill(null).map(() => ({
+    // ⚡ Bolt: Use Array.from instead of Array(n).fill(null).map for better performance
+    // It avoids creating intermediate sparse arrays and reduces redundant allocations during grid generation
+    const generateGrid = () => Array.from({ length: cols }, () => Array.from({ length: rows }, () => ({
       char: chars[Math.floor(Math.random() * chars.length)],
       color: baseColors[Math.floor(Math.random() * baseColors.length)],
       opacity: 0.15
