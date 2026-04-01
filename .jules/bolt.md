@@ -1,0 +1,3 @@
+## 2024-03-24 - [Remove Synchronous Layout Recalculation in high frequency event handlers]
+**Learning:** Using `document.elementFromPoint(mouseX, mouseY)` within a high frequency event loop (like a throttled `mousemove` inside `requestAnimationFrame`) forces a synchronous layout recalculation on every execution, causing layout thrashing. Because global overlays (like `.noise-overlay`) have `pointer-events: none`, relying on the original `e.target` provides the exact same information without the severe layout penalty.
+**Action:** Always prefer capturing `e.target` directly from the event object instead of manually querying the layout tree with `document.elementFromPoint` in high-frequency animations or cursor tracking systems.
