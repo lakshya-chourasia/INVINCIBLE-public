@@ -130,6 +130,18 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (
+      formData.name.length > 100 ||
+      formData.number.length > 50 ||
+      formData.email.length > 100 ||
+      formData.linkedin.length > 200 ||
+      formData.github.length > 200
+    ) {
+      setError('Input validation failed: fields exceed maximum length.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
