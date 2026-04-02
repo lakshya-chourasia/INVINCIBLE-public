@@ -1,0 +1,3 @@
+## 2025-04-02 - Optimize layout thrashing in mousemove events
+**Learning:** Calling `document.elementFromPoint` within high-frequency events (like `mousemove` inside `requestAnimationFrame`) forces synchronous layout recalculations and layout thrashing, severely dropping rendering performance.
+**Action:** Always prefer using `e.target` from the original event to identify interactive elements, and declare the tracking target reference in the outer scope of the frame loop to prevent stale closures.
