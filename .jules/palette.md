@@ -1,0 +1,3 @@
+## 2025-04-05 - Form Accessibility Pattern Learnings
+**Learning:** The `JoinCollective` component lacked basic form accessibility patterns (explicit `id` and `htmlFor` associations) and ARIA attributes for dynamic state changes (`role="alert"`, `aria-live`). Custom styled inputs require explicit semantic associations.
+**Action:** When creating custom forms or reviewing form code in this repository, always ensure explicit `<label htmlFor="id">` and `<input id="id">` associations, and add `role="alert"` and `aria-live="polite"` to dynamically rendered error blocks and loading states to ensure screen reader compatibility.
