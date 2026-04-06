@@ -13,10 +13,12 @@ export const GlobalInteraction: React.FC = () => {
     let rafId: number;
     let mouseX = -100;
     let mouseY = -100;
+    let hoverTarget: HTMLElement | null = null; // Store event target to avoid stale closure
 
     const move = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
+      hoverTarget = e.target as HTMLElement; // Capture target immediately
 
       // Throttle using requestAnimationFrame
       if (!rafId) {
@@ -25,7 +27,8 @@ export const GlobalInteraction: React.FC = () => {
           cursorY.set(mouseY);
           document.documentElement.style.setProperty('--x', `${mouseX}px`);
           document.documentElement.style.setProperty('--y', `${mouseY}px`);
-          const target = document.elementFromPoint(mouseX, mouseY) as HTMLElement;
+          // ⚡ Bolt: Use e.target instead of document.elementFromPoint to prevent synchronous layout thrashing at 60fps
+          const target = hoverTarget;
           setIsClickable(!!target?.closest('button, a, .interactive, input, .sm-toggle, .sm-resize-handle, .sm-logo'));
           rafId = 0;
         });
