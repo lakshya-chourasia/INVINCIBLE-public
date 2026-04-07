@@ -1,0 +1,3 @@
+## 2024-05-24 - Layout Thrashing in requestAnimationFrame
+**Learning:** Using `document.elementFromPoint` inside a `requestAnimationFrame` loop during `mousemove` events forces synchronous browser layout recalculations (layout thrashing), severely degrading performance even when throttled.
+**Action:** Always capture the underlying target element via `e.target` in the original event listener scope, and pass that variable into the `requestAnimationFrame` callback instead of re-querying the DOM. Ensure global overlays (like `.noise-overlay`) have `pointer-events: none` so `e.target` correctly points to the interactive UI.
