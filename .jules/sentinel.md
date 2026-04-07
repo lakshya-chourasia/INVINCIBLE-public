@@ -1,0 +1,4 @@
+## 2024-04-07 - [Information Leakage in Frontend Database Error Handling]
+**Vulnerability:** The catch block for frontend Supabase interactions displayed the raw `err.message` from backend API/database calls directly to the user interface via React state. This could potentially leak database schema structure, underlying validation rules, internal column details, or specific database constraints to an attacker, facilitating further exploitation.
+**Learning:** Frontend catch blocks dealing with backend/database actions must never bubble raw exception strings into the UI layer. `catch (err: any)` additionally bypassed type safety when analyzing the returned object.
+**Prevention:** Use generic placeholder messages on the frontend (e.g., "Synchronization failed. Please check your credentials.") to fail securely. Always use `catch (err: unknown)` for caught errors to force correct type checking and prevent implicit data leakage.
