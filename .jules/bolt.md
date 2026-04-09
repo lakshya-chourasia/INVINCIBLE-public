@@ -1,0 +1,3 @@
+## 2024-05-14 - [Layout Thrashing in rAF]
+**Learning:** Calling `document.elementFromPoint` inside a `requestAnimationFrame` callback to detect hover states forces synchronous layout recalculations every frame. This completely defeats the purpose of throttling events with rAF and tanks framerates during high-frequency mousemove events. Additionally, placing the DOM querying logic inside the rAF can lead to stale closures if event coordinates aren't updated correctly, or it wastes processing reading from the DOM rather than the direct event.
+**Action:** Always prefer using `e.target` directly from the `MouseEvent` when tracking interaction targets, saving the target in a scoped variable so the rAF callback can read it without interrogating the DOM dynamically.
