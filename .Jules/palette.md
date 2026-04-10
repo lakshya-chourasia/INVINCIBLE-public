@@ -1,0 +1,3 @@
+## 2025-04-10 - Form Accessibility
+**Learning:** In heavily stylized custom React forms (like `JoinCollective` in `SubPages.tsx`), default browser semantics for labeling and dynamic feedback are often overridden. Elements rely exclusively on custom attributes and styles, preventing screen readers from naturally pairing inputs with context. `aria-live="polite"` is necessary on loading states (like the submit button text changing to "SYNCHRONIZING_NODES") and on custom error feedback blocks, along with `role="alert"` for the error messages themselves.
+**Action:** Always verify `id` and `htmlFor` pairings exist on all form fields, and ensure dynamic error and loading states within custom UI frameworks explicitly declare `role="alert"` and `aria-live` properties.
