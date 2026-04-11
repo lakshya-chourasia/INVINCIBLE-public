@@ -1,0 +1,3 @@
+## 2025-04-11 - [Optimize High-Frequency DOM Queries in GlobalInteraction]
+**Learning:** Using `document.elementFromPoint` inside a high-frequency `requestAnimationFrame` loop (like a `mousemove` handler) forces synchronous layout recalculations, causing layout thrashing and degrading performance across the app. This codebase relies on tracking hover states globally, making this a critical bottleneck.
+**Action:** Always capture `e.target` directly from the original `MouseEvent` in an outer scope variable instead of recalculating it via `document.elementFromPoint` within the animation frame callback. This leverages the browser's existing event targeting without forcing a layout flush.
