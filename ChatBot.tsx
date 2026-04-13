@@ -156,6 +156,7 @@ export const ChatBot: React.FC = () => {
                 </button>
                 <button 
                   onClick={() => setIsOpen(false)}
+                  aria-label="Close chat"
                   className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors"
                 >
                   <X className="w-4 h-4 text-zinc-400" />
@@ -209,6 +210,7 @@ export const ChatBot: React.FC = () => {
                 <button 
                   onClick={handleSend}
                   disabled={isLoading || !input.trim()}
+                  aria-label="Send message"
                   className="absolute right-1.5 w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#5227FF] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100"
                 >
                   <Send className="w-3.5 h-3.5 md:w-4 md:h-4" />
