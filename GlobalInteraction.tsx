@@ -13,10 +13,12 @@ export const GlobalInteraction: React.FC = () => {
     let rafId: number;
     let mouseX = -100;
     let mouseY = -100;
+    let hoverTarget: HTMLElement | null = null;
 
     const move = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
+      hoverTarget = e.target as HTMLElement;
 
       // Throttle using requestAnimationFrame
       if (!rafId) {
@@ -25,8 +27,10 @@ export const GlobalInteraction: React.FC = () => {
           cursorY.set(mouseY);
           document.documentElement.style.setProperty('--x', `${mouseX}px`);
           document.documentElement.style.setProperty('--y', `${mouseY}px`);
-          const target = document.elementFromPoint(mouseX, mouseY) as HTMLElement;
-          setIsClickable(!!target?.closest('button, a, .interactive, input, .sm-toggle, .sm-resize-handle, .sm-logo'));
+
+          // Optimization: Using cached e.target (hoverTarget) instead of document.elementFromPoint
+          // to prevent synchronous layout thrashing after setting CSS custom properties.
+          setIsClickable(!!hoverTarget?.closest('button, a, .interactive, input, .sm-toggle, .sm-resize-handle, .sm-logo'));
           rafId = 0;
         });
       }
