@@ -110,6 +110,7 @@ export const ChatBot: React.FC = () => {
       <AnimatePresence>
         {!isOpen && (
           <motion.button
+            aria-label="Open Chat"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
@@ -149,6 +150,8 @@ export const ChatBot: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button 
                   onClick={() => setIsPro(!isPro)}
+                  aria-pressed={isPro}
+                  aria-label={`Toggle AI Model (Currently ${isPro ? 'Pro' : 'Flash'})`}
                   className={`flex items-center gap-1.5 md:gap-2 px-2.5 py-1 md:px-3 md:py-1.5 rounded-full border transition-all duration-300 ${isPro ? 'bg-[#5227FF]/20 border-[#5227FF]/50 text-white' : 'bg-white/5 border-white/10 text-zinc-500'}`}
                 >
                   {isPro ? <BrainCircuit className="w-2.5 h-2.5 md:w-3 md:h-3" /> : <Zap className="w-2.5 h-2.5 md:w-3 md:h-3" />}
@@ -156,6 +159,7 @@ export const ChatBot: React.FC = () => {
                 </button>
                 <button 
                   onClick={() => setIsOpen(false)}
+                  aria-label="Close Chat"
                   className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors"
                 >
                   <X className="w-4 h-4 text-zinc-400" />
@@ -209,6 +213,7 @@ export const ChatBot: React.FC = () => {
                 <button 
                   onClick={handleSend}
                   disabled={isLoading || !input.trim()}
+                  aria-label="Send Message"
                   className="absolute right-1.5 w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#5227FF] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100"
                 >
                   <Send className="w-3.5 h-3.5 md:w-4 md:h-4" />
