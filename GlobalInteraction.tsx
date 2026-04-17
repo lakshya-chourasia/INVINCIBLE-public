@@ -18,15 +18,17 @@ export const GlobalInteraction: React.FC = () => {
       mouseX = e.clientX;
       mouseY = e.clientY;
 
-      // Throttle using requestAnimationFrame
+      // Use e.target directly to avoid layout thrashing from document.elementFromPoint
+      const target = e.target as HTMLElement;
+      setIsClickable(!!target?.closest('button, a, .interactive, input, .sm-toggle, .sm-resize-handle, .sm-logo'));
+
+      // Throttle layout/style updates using requestAnimationFrame
       if (!rafId) {
         rafId = requestAnimationFrame(() => {
           cursorX.set(mouseX);
           cursorY.set(mouseY);
           document.documentElement.style.setProperty('--x', `${mouseX}px`);
           document.documentElement.style.setProperty('--y', `${mouseY}px`);
-          const target = document.elementFromPoint(mouseX, mouseY) as HTMLElement;
-          setIsClickable(!!target?.closest('button, a, .interactive, input, .sm-toggle, .sm-resize-handle, .sm-logo'));
           rafId = 0;
         });
       }
