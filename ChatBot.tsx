@@ -92,7 +92,7 @@ export const ChatBot: React.FC = () => {
         content: responseText,
         timestamp: Date.now()
       }]);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Gemini error:', error);
       setMessages(prev => [...prev, {
         id: Math.random().toString(36),
