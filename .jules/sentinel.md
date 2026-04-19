@@ -1,0 +1,4 @@
+## 2025-02-28 - Information Disclosure via Catch Blocks and Logs
+**Vulnerability:** The application was exposing sensitive database error details to users in `SubPages.tsx` via `catch (err: any)` and leaking Supabase connection strings to the console via `supabase.ts`.
+**Learning:** Using `catch (err: any)` easily leads to unintentionally passing internal error stack traces or database messages (`err.message`) to user-facing UI state. Global configuration files often retain development-time `console.log` statements that leak secrets in production.
+**Prevention:** Use `catch (err: unknown)` to force type checking before accessing error properties. Always log raw errors internally but display generic, sanitized messages to the user. Avoid committing `console.log` statements in global client initializers that handle API keys or connection URLs.
