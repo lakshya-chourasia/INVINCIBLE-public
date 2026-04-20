@@ -1,0 +1,3 @@
+## 2025-03-09 - Avoid synchronous layout thrashing in high-frequency RAF callbacks
+**Learning:** Calling `document.elementFromPoint` within high-frequency events (like `mousemove` inside `requestAnimationFrame`) forces synchronous layout recalculations, causing significant layout thrashing and performance degradation.
+**Action:** When throttling high-frequency events using `requestAnimationFrame`, avoid calculating derived state that forces synchronous layout (like `document.elementFromPoint` or `e.target.closest()`) outside the RAF callback. Instead, store the raw event data (like `e.target`) in an outer-scoped variable during the event and perform the calculation inside the RAF callback using that stored reference.
