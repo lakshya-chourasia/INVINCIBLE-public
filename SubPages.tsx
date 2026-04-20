@@ -149,9 +149,12 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
       if (dbError) throw dbError;
 
       setSubmitted(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error saving to database:', err);
-      setError(err.message || 'Synchronization failed. Please check your credentials.');
+      // SECURITY: Prevent internal backend/Supabase errors from leaking to user UI.
+      // Safe fallback message is used when err is not a generic Error type.
+      const safeErrorMessage = err instanceof Error ? err.message : 'Synchronization failed. Please check your credentials.';
+      setError(safeErrorMessage);
     } finally {
       setLoading(false);
     }
