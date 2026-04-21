@@ -1,0 +1,3 @@
+## 2024-05-24 - Accessibility in Custom Form Structures
+**Learning:** This application heavily modifies standard browser semantic structures for forms (e.g. `JoinCollective`). As a result, critical accessibility features like connecting `<label>` and `<input>` with `htmlFor` and `id`, and dynamic form state announcement (like error rendering) for screen readers via `role="alert"` and `aria-live="polite"` must be explicitly built in to maintain usability.
+**Action:** Always verify that custom form elements maintain their semantic meaning (`htmlFor`, `id`, `aria-live`) despite visual customizations or wrapping components.
