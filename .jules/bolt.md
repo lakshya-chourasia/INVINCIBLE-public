@@ -1,0 +1,3 @@
+## 2024-10-27 - [Avoid Synchronous Layout Thrashing in requestAnimationFrame]
+**Learning:** Calling `document.elementFromPoint` inside a `requestAnimationFrame` callback forced synchronous layout recalculations for every frame during a `mousemove` event, causing performance degradation.
+**Action:** Caching `e.target` directly from the event object outside the RAF callback and using it inside the RAF prevents layout thrashing and ensures smooth tracking.
