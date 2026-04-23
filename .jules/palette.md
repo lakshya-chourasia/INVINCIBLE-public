@@ -1,0 +1,3 @@
+## 2024-11-20 - Custom Form Accessibility & Dynamic ARIA Requirements
+**Learning:** Heavily modified custom forms in this app (like JoinCollective) abandon native browser semantic structures, requiring manual recreation of accessibility links. Form fields must have explicit `htmlFor`/`id` mapping, and custom dynamic states (like inline errors and loading button texts) must be wrapped in `aria-live="polite"` or `role="alert"` for screen readers to properly announce async operations.
+**Action:** When implementing or modifying custom forms, always verify `htmlFor` attributes match input `id`s, and ensure dynamic async messaging is properly announced using ARIA live regions.
