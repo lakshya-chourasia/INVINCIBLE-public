@@ -13,10 +13,12 @@ export const GlobalInteraction: React.FC = () => {
     let rafId: number;
     let mouseX = -100;
     let mouseY = -100;
+    let currentTarget: HTMLElement | null = null;
 
     const move = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
+      currentTarget = e.target as HTMLElement;
 
       // Throttle using requestAnimationFrame
       if (!rafId) {
@@ -25,7 +27,12 @@ export const GlobalInteraction: React.FC = () => {
           cursorY.set(mouseY);
           document.documentElement.style.setProperty('--x', `${mouseX}px`);
           document.documentElement.style.setProperty('--y', `${mouseY}px`);
-          const target = document.elementFromPoint(mouseX, mouseY) as HTMLElement;
+
+          // ⚡ Bolt Performance Optimization:
+          // Why: document.elementFromPoint causes forced synchronous layout recalculation (layout thrashing) every frame.
+          // Impact: Eliminates a major main-thread bottleneck during continuous mouse movement by caching the event target.
+          const target = currentTarget;
+
           setIsClickable(!!target?.closest('button, a, .interactive, input, .sm-toggle, .sm-resize-handle, .sm-logo'));
           rafId = 0;
         });

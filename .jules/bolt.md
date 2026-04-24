@@ -1,0 +1,3 @@
+## 2024-05-24 - Layout Thrashing with document.elementFromPoint in RAF
+**Learning:** Using `document.elementFromPoint()` inside a `requestAnimationFrame` callback that handles high-frequency events (like `mousemove`) forces the browser to perform synchronous layout recalculations. This causes severe layout thrashing because the browser has to recalculate the exact positions of all elements on the page multiple times per second, completely defeating the purpose of using RAF for performance throttling.
+**Action:** Always cache the `e.target` from the original event (in an outer scope to avoid stale closures) and use that cached target inside the RAF callback instead of recalculating it with `document.elementFromPoint()`.
