@@ -13,10 +13,12 @@ export const GlobalInteraction: React.FC = () => {
     let rafId: number;
     let mouseX = -100;
     let mouseY = -100;
+    let currentTarget: HTMLElement | null = null;
 
     const move = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
+      currentTarget = e.target as HTMLElement;
 
       // Throttle using requestAnimationFrame
       if (!rafId) {
@@ -25,7 +27,8 @@ export const GlobalInteraction: React.FC = () => {
           cursorY.set(mouseY);
           document.documentElement.style.setProperty('--x', `${mouseX}px`);
           document.documentElement.style.setProperty('--y', `${mouseY}px`);
-          const target = document.elementFromPoint(mouseX, mouseY) as HTMLElement;
+          // ⚡ Bolt Performance Optimization: Replace expensive synchronous `document.elementFromPoint` with cached `e.target` to avoid layout thrashing during high-frequency mousemove events. Expected improvement: Significant reduction in CPU time during rapid mouse movement.
+          const target = currentTarget;
           setIsClickable(!!target?.closest('button, a, .interactive, input, .sm-toggle, .sm-resize-handle, .sm-logo'));
           rafId = 0;
         });
