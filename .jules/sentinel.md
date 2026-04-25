@@ -1,0 +1,4 @@
+## 2025-04-25 - [Prevent Information Leakage in Supabase Client]
+**Vulnerability:** The application was logging the Supabase URL to the console in `supabase.ts`. This configuration data could leak into production logs or browser consoles, potentially exposing internal project configuration details.
+**Learning:** This existed because of a standard debugging console log (`console.log('Supabase Client Initialized:', supabaseUrl)`) left behind during development, which inadvertently persisted into the configuration file used in production.
+**Prevention:** Always remove or sanitize `console.log` statements involving sensitive configuration parameters (like API URLs, keys, etc.) before committing. Add explicit security comments to configuration initializers reminding developers to keep production logs clean and avoid information leakage.
