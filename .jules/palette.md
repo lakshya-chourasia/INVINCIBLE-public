@@ -1,0 +1,3 @@
+## 2024-04-27 - Form Accessibility Fix in SubPages.tsx
+**Learning:** Found a pattern where complex styled forms lacked standard `htmlFor` and `id` linking. Added them correctly to ensure screen readers associate input fields and their labels appropriately. The error state also lacked dynamic ARIA alerts.
+**Action:** Always verify that every custom form input has its respective label mapped via `htmlFor` matching the input's `id`. Add `role="alert"` and `aria-live="polite"` to dynamic error text so screen readers announce form validation issues, and use `aria-busy` for form submission button loading states.
