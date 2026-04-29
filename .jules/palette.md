@@ -1,0 +1,3 @@
+## 2026-04-29 - Improve Form and Chat Accessibility
+**Learning:** React fragments or custom form components sometimes drop standard `<label>` to `<input>` associations. For accessibility, forms strictly require unique `id` on inputs paired with `htmlFor` on labels, and dynamic form errors require `role="alert"` and `aria-live="polite"` so screen readers read them aloud without needing focus.
+**Action:** When inspecting forms, always verify `htmlFor` and `id` mapping. Always ensure icon-only buttons have descriptive `aria-label` attributes. When buttons represent toggle states, use `aria-pressed` alongside `aria-label`.
