@@ -1,0 +1,3 @@
+## 2024-05-01 - Avoid Layout Thrashing in requestAnimationFrame
+**Learning:** Using `document.elementFromPoint` within high-frequency events (like `mousemove`) inside a `requestAnimationFrame` loop forces synchronous layout recalculations (layout thrashing), causing performance bottlenecks. Defining the target variable locally inside the event handler creates a stale closure, causing the scheduled RAF callback to capture an outdated target if multiple events fire before the frame executes.
+**Action:** When throttling high-frequency events using `requestAnimationFrame`, always cache the event target (`e.target`) from the original event in an outer-scope variable (alongside coordinate variables) instead of querying the DOM within the RAF callback.
