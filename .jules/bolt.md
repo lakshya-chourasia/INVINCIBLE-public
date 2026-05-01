@@ -1,0 +1,3 @@
+## 2024-05-01 - Layout Thrashing in RAF Mouse Tracker
+**Learning:** Calling `document.elementFromPoint` inside a `requestAnimationFrame` loop that throttles high-frequency events (like `mousemove`) forces synchronous layout recalculations every frame. This completely undermines the performance benefits of throttling and causes significant stuttering.
+**Action:** When throttling high-frequency events and scheduling DOM updates via `requestAnimationFrame`, always capture event data (like `e.target`) into cached outer-scope variables during the original event firing, rather than recalculating spatial queries during the scheduled frame execution.
