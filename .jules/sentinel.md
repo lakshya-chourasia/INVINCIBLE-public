@@ -1,0 +1,4 @@
+## 2025-05-02 - UI Error Leakage via Form State
+**Vulnerability:** Raw database errors were being exposed to the UI via `err.message` in the catch block for `JoinCollective` insertions.
+**Learning:** React state variables (like `setError`) can easily become vectors for information leakage if raw error objects from backend/DB integrations (like Supabase) are passed directly to them.
+**Prevention:** Always use generic fallback messages for UI state in catch blocks and ensure `catch (err: unknown)` is used to enforce type checking (like `err instanceof Error`) before accessing error properties, logging the actual error internally (`console.error`).
