@@ -1,0 +1,3 @@
+## 2025-05-03 - Added HTML Form Input Label Connections to JoinCollective
+**Learning:** Found an accessibility issue pattern in the app's components, where custom styled forms like `JoinCollective` in `SubPages.tsx` did not maintain explicit `id` and `htmlFor` attributes to properly associate inputs with labels. Also, the dynamic error blocks and loading states needed screen reader compatibility as default browser semantic structures are heavily modified.
+**Action:** Always maintain explicit `id` and `htmlFor` attributes on forms to properly associate inputs with labels. Additionally, use `role="alert"` and `aria-live="polite"` on dynamic error blocks and loading states to ensure screen reader compatibility as default browser semantic structures are heavily modified.
