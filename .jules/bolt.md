@@ -1,0 +1,3 @@
+## 2025-05-03 - Prevent layout thrashing in high-frequency mouse events
+**Learning:** Calling `document.elementFromPoint` inside a `requestAnimationFrame` loop on `mousemove` forces synchronous layout recalculations, causing severe layout thrashing. Furthermore, when defining local variables inside a throttled event handler, a stale closure occurs if the event fires multiple times before the frame executes.
+**Action:** Always capture `e.target` directly from the event and cache it in the outer scope (alongside coordinate variables) instead of querying the DOM dynamically inside the RAF callback.
