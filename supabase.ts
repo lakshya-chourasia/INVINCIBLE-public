@@ -7,7 +7,8 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 if (!supabaseUrl || !supabaseAnonKey) {
     console.error('Supabase Setup Missing: Connect your project in .env');
 } else {
-    console.log('Supabase Client Initialized:', supabaseUrl);
+    // SECURITY: Do not log configuration values (like supabaseUrl) to prevent information leakage.
+    console.log('Supabase Client Initialized');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
