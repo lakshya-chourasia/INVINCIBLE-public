@@ -1,0 +1,3 @@
+## 2024-05-05 - Avoid layout thrashing in high-frequency events
+**Learning:** Using `document.elementFromPoint` inside a `requestAnimationFrame` loop that tracks mouse movement forces synchronous layout recalculations, causing a significant performance bottleneck (layout thrashing). Additionally, if `currentTarget` is cached inside the event handler instead of the outer scope, it can lead to stale closures.
+**Action:** Always prefer caching the native `e.target` from the original event object into an outer scope variable and evaluate it within the `requestAnimationFrame` loop to avoid layout thrashing and stale closures.
