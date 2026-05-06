@@ -128,30 +128,49 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
     github: ''
   });
 
+  // SECURITY: Prevent XSS by stripping basic HTML tags.
+  const sanitizeInput = (input: string) => input.replace(/[<>]/g, '');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    // SECURITY: Validate input formats before insertion.
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[\d\s+\-()]{7,20}$/;
+
+    if (!emailRegex.test(formData.email)) {
+      setError('Invalid email format');
+      setLoading(false);
+      return;
+    }
+    if (!phoneRegex.test(formData.number)) {
+      setError('Invalid phone format');
+      setLoading(false);
+      return;
+    }
 
     try {
       const { error: dbError } = await supabase
         .from('members')
         .insert([
           {
-            name: formData.name,
-            phone: formData.number,
-            email: formData.email,
-            linkedin: formData.linkedin,
-            github: formData.github
+            name: sanitizeInput(formData.name),
+            phone: sanitizeInput(formData.number),
+            email: sanitizeInput(formData.email),
+            linkedin: sanitizeInput(formData.linkedin),
+            github: sanitizeInput(formData.github)
           }
         ]);
 
       if (dbError) throw dbError;
 
       setSubmitted(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      // SECURITY: Prevent information leakage by hiding actual database error messages from the user UI.
       console.error('Error saving to database:', err);
-      setError(err.message || 'Synchronization failed. Please check your credentials.');
+      setError('Synchronization failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
