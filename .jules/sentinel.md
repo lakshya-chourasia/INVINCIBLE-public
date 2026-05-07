@@ -1,0 +1,4 @@
+## 2024-05-07 - Client-Side Form Vulnerabilities (XSS & Info Leakage)
+**Vulnerability:** The `JoinCollective` form lacked input validation, was vulnerable to XSS due to unsanitized inputs inserted into the database, and leaked internal database error messages (`err.message`) to the frontend UI upon failure.
+**Learning:** React form inputs must still be validated and sanitized before API calls to prevent malformed data and XSS. Explicit `catch (err: any)` blocks often lead to accidental exposure of backend internals.
+**Prevention:** Always implement regex validation for structured fields (email, phone), sanitize user text to strip HTML/script tags (`<`, `>`), type `catch` blocks as `unknown`, and strictly use generic UI error messages while maintaining internal `console.error` logs for debugging.
