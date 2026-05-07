@@ -116,6 +116,9 @@ export const PlaceholderPage: React.FC<{ name: string }> = ({ name }) => (
 
 import { supabase } from './supabase';
 
+// SECURITY: Simple sanitization to strip basic XSS attack vectors
+const sanitizeInput = (input: string) => input.replace(/[<>]/g, '');
+
 export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ setPage }) => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -133,25 +136,38 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
     setLoading(true);
     setError(null);
 
+    // SECURITY: Input validation before processing
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setError('Invalid email format.');
+      setLoading(false);
+      return;
+    }
+    if (!/^[\d\s+\-()]{7,20}$/.test(formData.number)) {
+      setError('Invalid phone number format.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const { error: dbError } = await supabase
         .from('members')
         .insert([
           {
-            name: formData.name,
-            phone: formData.number,
-            email: formData.email,
-            linkedin: formData.linkedin,
-            github: formData.github
+            name: sanitizeInput(formData.name),
+            phone: sanitizeInput(formData.number),
+            email: sanitizeInput(formData.email),
+            linkedin: sanitizeInput(formData.linkedin),
+            github: sanitizeInput(formData.github)
           }
         ]);
 
       if (dbError) throw dbError;
 
       setSubmitted(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      // SECURITY: Internal logging kept, but generic message returned to avoid DB leakage
       console.error('Error saving to database:', err);
-      setError(err.message || 'Synchronization failed. Please check your credentials.');
+      setError('Synchronization failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
