@@ -128,30 +128,49 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
     github: ''
   });
 
+  // SECURITY: Sanitize input to strip potentially dangerous tags
+  const sanitizeInput = (input: string) => input.replace(/[<>]/g, '');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    // SECURITY: Validate email format to ensure it conforms to expected patterns
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setError('Invalid email format');
+      setLoading(false);
+      return;
+    }
+
+    // SECURITY: Validate phone format to prevent malformed data injection
+    if (!/^[\d\s+\-()]{7,20}$/.test(formData.number)) {
+      setError('Invalid phone format');
+      setLoading(false);
+      return;
+    }
 
     try {
       const { error: dbError } = await supabase
         .from('members')
         .insert([
           {
-            name: formData.name,
-            phone: formData.number,
-            email: formData.email,
-            linkedin: formData.linkedin,
-            github: formData.github
+            name: sanitizeInput(formData.name),
+            phone: sanitizeInput(formData.number),
+            email: sanitizeInput(formData.email),
+            linkedin: sanitizeInput(formData.linkedin),
+            github: sanitizeInput(formData.github)
           }
         ]);
 
       if (dbError) throw dbError;
 
       setSubmitted(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      // SECURITY: Log error internally without exposing it to the user
       console.error('Error saving to database:', err);
-      setError(err.message || 'Synchronization failed. Please check your credentials.');
+      // SECURITY: Fail securely by providing a generic error message to avoid information leakage
+      setError('Synchronization failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
