@@ -1,0 +1,3 @@
+## 2025-03-01 - Avoid Layout Thrashing in RAF Mouse Events
+**Learning:** Using `document.elementFromPoint(mouseX, mouseY)` inside a throttled `requestAnimationFrame` for a global mouse interaction forces synchronous layout recalculations and causes layout thrashing, significantly degrading performance during high-frequency events. However, caching the event target directly in the event handler inside the RAF loop leads to stale closures.
+**Action:** Always cache `e.target` as an `HTMLElement` in an outer scope variable (`let currentTarget: HTMLElement | null = null;`) alongside coordinate variables, and update it on every event trigger, then use that cached target inside the RAF loop to evaluate interaction bounds without triggering synchronous layouts.
