@@ -134,24 +134,41 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
     setError(null);
 
     try {
+      // SECURITY: Sanitize inputs to prevent XSS and validate formats
+      const sanitizeInput = (str: string) => str.replace(/[<>]/g, '');
+      const sanitizedEmail = sanitizeInput(formData.email);
+      const sanitizedPhone = sanitizeInput(formData.number);
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(sanitizedEmail)) {
+        throw new Error('Invalid email format');
+      }
+      if (!/^[\d\s+\-()]{7,20}$/.test(sanitizedPhone)) {
+        throw new Error('Invalid phone format');
+      }
+
       const { error: dbError } = await supabase
         .from('members')
         .insert([
           {
-            name: formData.name,
-            phone: formData.number,
-            email: formData.email,
-            linkedin: formData.linkedin,
-            github: formData.github
+            name: sanitizeInput(formData.name),
+            phone: sanitizedPhone,
+            email: sanitizedEmail,
+            linkedin: sanitizeInput(formData.linkedin),
+            github: sanitizeInput(formData.github)
           }
         ]);
 
       if (dbError) throw dbError;
 
       setSubmitted(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error saving to database:', err);
-      setError(err.message || 'Synchronization failed. Please check your credentials.');
+      // SECURITY: Avoid leaking database errors to the client by using a generic message
+      if (err instanceof Error && (err.message === 'Invalid email format' || err.message === 'Invalid phone format')) {
+        setError(err.message);
+      } else {
+        setError('Synchronization failed. Please check your credentials.');
+      }
     } finally {
       setLoading(false);
     }
