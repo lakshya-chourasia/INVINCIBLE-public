@@ -1,0 +1,3 @@
+## 2025-05-09 - [Preventing Layout Thrashing in RAF loops]
+**Learning:** Calling `document.elementFromPoint` inside a high-frequency event handler throttled by `requestAnimationFrame` (like a `mousemove` tracker) forces synchronous layout recalculations (layout thrashing) on every frame. This heavily degrades animation framerates and scroll performance.
+**Action:** Always capture `e.target` directly from the original event (e.g., `mousemove`) into a closure variable, and use that cached value inside the `requestAnimationFrame` callback to perform DOM checks (like `.closest()`). Avoid using methods that force synchronous layouts (like `elementFromPoint` or `getBoundingClientRect`) inside RAF callbacks when a cached event property suffices.
