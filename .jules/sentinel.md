@@ -1,0 +1,4 @@
+## 2025-05-09 - Add Input Sanitization and Secure Error Handling in SubPages
+**Vulnerability:** Unsanitized user inputs sent directly to the database and raw backend error messages leaked to the UI in `SubPages.tsx`.
+**Learning:** React state alone does not protect against malicious input payload insertion if the backend endpoint accepts it. Furthermore, preserving generic UI catch blocks is essential to prevent information leakage about the database schema.
+**Prevention:** Always validate and sanitize user inputs on the client before submission, and explicitly override backend errors with generic UI messages.
