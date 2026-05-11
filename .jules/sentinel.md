@@ -1,0 +1,4 @@
+## 2025-03-05 - Missing Input Sanitization and Error Leakage in Form Submission
+**Vulnerability:** The JoinCollective form submitted raw user input (name, number, email, linkedin, github) directly to the database without sanitization or strict format validation, leading to potential XSS/injection risks. Additionally, backend database error messages (err.message) were exposed directly to the user UI.
+**Learning:** Always explicitly strip potentially dangerous characters (like < and >) and validate formats (email, phone) on the client before submission. Ensure generic error messages are presented to the user while logging the raw errors internally to avoid information leakage.
+**Prevention:** Enforce input sanitization via a standard utility and validate against strict regex patterns. Catch blocks must use 'unknown' types and never reflect internal error messages to the client.
