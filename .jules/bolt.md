@@ -1,0 +1,3 @@
+## 2024-05-17 - [Optimizing Canvas Rendering Loop]
+**Learning:** Inside a high-frequency `requestAnimationFrame` loop, evaluating a probabilistic check (e.g., `Math.random() < 0.015`) across a 14,000+ cell array is a CPU bottleneck. Decoupling the update check from the render logic by pre-calculating the exact number of updates (`Math.floor(totalCells * chance)`) and directly targeting random indices avoids ~14,000 O(N) calls to `Math.random()` per frame while maintaining visual parity.
+**Action:** Whenever iterating large arrays for random, sparse updates in a render loop, pre-calculate the update count and select random indices rather than probabilistically evaluating every single cell.
