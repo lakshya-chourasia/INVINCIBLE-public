@@ -117,6 +117,7 @@ export const ChatBot: React.FC = () => {
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsOpen(true)}
             className="w-14 h-14 md:w-16 md:h-16 rounded-full liquid-glass purple-liquid-glass flex items-center justify-center text-white shadow-2xl"
+            aria-label="Open Collective AI Chat"
           >
             <Sparkles className="w-6 h-6 md:w-8 md:h-8" />
           </motion.button>
@@ -157,6 +158,7 @@ export const ChatBot: React.FC = () => {
                 <button 
                   onClick={() => setIsOpen(false)}
                   className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors"
+                  aria-label="Close chat"
                 >
                   <X className="w-4 h-4 text-zinc-400" />
                 </button>
@@ -210,6 +212,7 @@ export const ChatBot: React.FC = () => {
                   onClick={handleSend}
                   disabled={isLoading || !input.trim()}
                   className="absolute right-1.5 w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#5227FF] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100"
+                  aria-label="Send message"
                 >
                   <Send className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 </button>
