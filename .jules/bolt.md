@@ -1,0 +1,3 @@
+## 2024-05-24 - [Decoupling Updates from Renders in Grids]
+**Learning:** Performing a probabilistic check (e.g., `if (Math.random() < chance)`) inside a high-frequency rendering loop for a large grid (e.g., 14,000+ cells) creates a significant CPU bottleneck due to excessive O(N) calls to the random number generator.
+**Action:** Decouple update logic from rendering by pre-calculating the exact number of updates required (`numUpdates = Math.floor(totalCells * chance)`) and directly selecting random indices to update, drastically reducing computational overhead while maintaining visual fidelity.
