@@ -52,20 +52,30 @@ export const LetterGlitch: React.FC = () => {
           // Update only a subset of cells per frame for better performance
           const updateChance = 0.015; // Reduced from 0.02
 
+          // ⚡ Bolt Optimization: Pre-calculate number of updates and select random cells
+          // Decoupling update logic reduces O(N) Math.random() calls to exactly numUpdates calls
+          const totalCells = cols * rows;
+          const numUpdates = Math.floor(totalCells * updateChance);
+
+          for (let k = 0; k < numUpdates; k++) {
+            const index = Math.floor(Math.random() * totalCells);
+            const i = Math.floor(index / rows);
+            const j = index % rows;
+            const cell = grid[i][j];
+
+            cell.char = chars[Math.floor(Math.random() * chars.length)];
+            if (Math.random() < 0.03) {
+              cell.color = accents[Math.floor(Math.random() * accents.length)];
+              cell.opacity = 0.6;
+            } else {
+              cell.color = baseColors[Math.floor(Math.random() * baseColors.length)];
+              cell.opacity = 0.15;
+            }
+          }
+
           for (let i = 0; i < cols; i++) {
             for (let j = 0; j < rows; j++) {
               const cell = grid[i][j];
-
-              if (Math.random() < updateChance) {
-                cell.char = chars[Math.floor(Math.random() * chars.length)];
-                if (Math.random() < 0.03) {
-                  cell.color = accents[Math.floor(Math.random() * accents.length)];
-                  cell.opacity = 0.6;
-                } else {
-                  cell.color = baseColors[Math.floor(Math.random() * baseColors.length)];
-                  cell.opacity = 0.15;
-                }
-              }
 
               ctx.fillStyle = cell.color;
               ctx.globalAlpha = cell.opacity;
