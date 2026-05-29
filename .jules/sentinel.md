@@ -1,0 +1,4 @@
+## 2025-05-29 - [Fix Information Leakage via Error Messages]
+**Vulnerability:** Backend/Database error details (`err.message`) were directly exposed to the UI in the `JoinCollective` form inside `SubPages.tsx`.
+**Learning:** `err: any` in try-catch blocks allowed arbitrary database error objects to be treated as having a `message` property, creating an explicit path for schema or internal logic leakage to the end user. Overriding `err` with `unknown` enforces deliberate type-checking before extracting data or explicitly setting generic fallback messages.
+**Prevention:** Avoid exposing dynamic error contents directly in UI rendering logic. Always use `catch (err: unknown)` when capturing errors, strictly log the original error internally for debugability (`console.error(err)`), and provide a static, generic user-facing message for failed operations.
