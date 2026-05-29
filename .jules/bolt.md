@@ -1,0 +1,3 @@
+## 2025-05-18 - [Optimize high-frequency grid updates]
+**Learning:** In a high-frequency rendering loop (e.g., `requestAnimationFrame` drawing a large grid of 14,000+ cells), evaluating `if (Math.random() < chance)` for every single cell is a major CPU bottleneck, scaling at O(N) per frame where N is the grid size.
+**Action:** Decouple the update logic from the render loop. Pre-calculate the exact number of updates needed (`Math.floor(totalCells * chance)`) and update random indices directly. This shifts the update complexity from O(N) to O(K) where K is the number of cells being updated, drastically reducing `Math.random()` calls and improving JS execution time per frame.
