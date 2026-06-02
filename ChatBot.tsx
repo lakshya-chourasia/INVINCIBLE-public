@@ -110,6 +110,7 @@ export const ChatBot: React.FC = () => {
       <AnimatePresence>
         {!isOpen && (
           <motion.button
+            aria-label="Open ChatBot"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
@@ -148,6 +149,7 @@ export const ChatBot: React.FC = () => {
 
               <div className="flex items-center gap-2">
                 <button 
+                  aria-label={isPro ? "Switch to Flash model" : "Switch to Pro model"}
                   onClick={() => setIsPro(!isPro)}
                   className={`flex items-center gap-1.5 md:gap-2 px-2.5 py-1 md:px-3 md:py-1.5 rounded-full border transition-all duration-300 ${isPro ? 'bg-[#5227FF]/20 border-[#5227FF]/50 text-white' : 'bg-white/5 border-white/10 text-zinc-500'}`}
                 >
@@ -155,6 +157,7 @@ export const ChatBot: React.FC = () => {
                   <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest">{isPro ? 'Pro' : 'Flash'}</span>
                 </button>
                 <button 
+                  aria-label="Close ChatBot"
                   onClick={() => setIsOpen(false)}
                   className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors"
                 >
@@ -207,6 +210,7 @@ export const ChatBot: React.FC = () => {
                   className="w-full bg-white/5 border border-white/10 rounded-full py-3 md:py-4 pl-5 md:pl-6 pr-14 md:pr-16 text-[11px] md:text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-[#5227FF]/50 transition-all"
                 />
                 <button 
+                  aria-label="Send message"
                   onClick={handleSend}
                   disabled={isLoading || !input.trim()}
                   className="absolute right-1.5 w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#5227FF] text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100"
