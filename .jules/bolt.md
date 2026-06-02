@@ -1,0 +1,3 @@
+## 2024-05-24 - Decoupling Probabilistic Grid Updates
+**Learning:** Performing `Math.random() < updateChance` inside the inner rendering loop for large grids (e.g. 14,000+ cells for `LetterGlitch`) is a significant CPU bottleneck due to O(N) calls to the random number generator. The phosphor trail effect requires every cell to be redrawn (so we cannot optimize the clear/draw cycle), but the data updates can be decoupled.
+**Action:** Pre-calculate the exact number of updates required (`Math.floor(totalCells * chance)`) and directly select random indices to update before running the separate O(N) rendering loop.
