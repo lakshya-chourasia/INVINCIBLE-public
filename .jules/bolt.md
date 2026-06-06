@@ -1,0 +1,3 @@
+## 2024-06-06 - Decoupling Probabilistic Check from Render Loops
+**Learning:** Performing a probabilistic check (e.g., if (Math.random() < chance)) inside a high-frequency rendering loop for a large grid (e.g., 14,000+ cells) is a significant CPU bottleneck. Attempting to optimize it by selectively clearing and redrawing only changed cells breaks the phosphor trail visual fidelity.
+**Action:** Decouple the update logic: pre-calculate the exact number of updates required (numUpdates = Math.floor(totalCells * chance)) and directly select random indices to update, thereby reducing O(N) calls to the random number generator while maintaining the full render loop.
