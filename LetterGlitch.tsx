@@ -52,21 +52,25 @@ export const LetterGlitch: React.FC = () => {
           // Update only a subset of cells per frame for better performance
           const updateChance = 0.015; // Reduced from 0.02
 
+          // ⚡ Bolt: Decouple update logic from drawing to reduce Math.random calls by ~98%
+          const numUpdates = Math.floor(cols * rows * updateChance);
+          for (let k = 0; k < numUpdates; k++) {
+            const i = Math.floor(Math.random() * cols);
+            const j = Math.floor(Math.random() * rows);
+            const cell = grid[i][j];
+            cell.char = chars[Math.floor(Math.random() * chars.length)];
+            if (Math.random() < 0.03) {
+              cell.color = accents[Math.floor(Math.random() * accents.length)];
+              cell.opacity = 0.6;
+            } else {
+              cell.color = baseColors[Math.floor(Math.random() * baseColors.length)];
+              cell.opacity = 0.15;
+            }
+          }
+
           for (let i = 0; i < cols; i++) {
             for (let j = 0; j < rows; j++) {
               const cell = grid[i][j];
-
-              if (Math.random() < updateChance) {
-                cell.char = chars[Math.floor(Math.random() * chars.length)];
-                if (Math.random() < 0.03) {
-                  cell.color = accents[Math.floor(Math.random() * accents.length)];
-                  cell.opacity = 0.6;
-                } else {
-                  cell.color = baseColors[Math.floor(Math.random() * baseColors.length)];
-                  cell.opacity = 0.15;
-                }
-              }
-
               ctx.fillStyle = cell.color;
               ctx.globalAlpha = cell.opacity;
               ctx.fillText(cell.char, i * fontSize, j * fontSize);
