@@ -49,6 +49,7 @@ export const StaggeredMenuHeader: React.FC<StaggeredMenuHeaderProps> = ({
           className="sm-toggle liquid-glass"
           onClick={toggleMenu}
           aria-expanded={open}
+          aria-label={open ? "Close menu" : "Open menu"}
         >
           <span className="sm-toggle-textWrap">
             <span ref={textInnerRef} className="sm-toggle-textInner">
