@@ -36,10 +36,12 @@ export const ChatBot: React.FC = () => {
     const apiKey = (window as any).process?.env?.API_KEY || '';
     if (!input.trim() || isLoading || !apiKey) {
       if (!apiKey) {
+        // 🛡️ Sentinel Security Fix: Prevent exposing environment variable dependencies to the UI
+        console.error('Error: API Key not found in environment. Please check your configuration.');
         setMessages(prev => [...prev, {
           id: Math.random().toString(36),
           role: 'assistant',
-          content: 'Error: API Key not found in environment. Please check your configuration.',
+          content: 'Error: Service unavailable. Please try again later.',
           timestamp: Date.now()
         }]);
       }
