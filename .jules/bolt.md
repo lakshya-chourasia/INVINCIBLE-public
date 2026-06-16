@@ -1,0 +1,3 @@
+## 2024-06-16 - Math.random() Bottleneck in High-Frequency Canvas Render Loops
+**Learning:** Performing a probabilistic check (`if (Math.random() < chance)`) across a large grid (e.g., 14,000+ cells) inside a high-frequency rendering loop (`requestAnimationFrame`) is a significant CPU bottleneck due to excessive calls to the random number generator, even if most cells aren't updated.
+**Action:** Decouple the update logic: pre-calculate the exact number of updates required (`numUpdates = Math.floor(totalCells * chance)`) and directly select random indices to update, reducing `Math.random()` calls from O(N) to O(numUpdates).
