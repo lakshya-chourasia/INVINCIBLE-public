@@ -151,7 +151,8 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
       setSubmitted(true);
     } catch (err: any) {
       console.error('Error saving to database:', err);
-      setError(err.message || 'Synchronization failed. Please check your credentials.');
+      // 🛡️ Sentinel Security Fix: Prevent leaking raw DB errors to the UI
+      setError('Synchronization failed. Please try again later.');
     } finally {
       setLoading(false);
     }
