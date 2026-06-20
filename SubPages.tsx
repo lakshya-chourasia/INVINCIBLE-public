@@ -116,6 +116,9 @@ export const PlaceholderPage: React.FC<{ name: string }> = ({ name }) => (
 
 import { supabase } from './supabase';
 
+// SECURITY: Sanitize inputs to prevent XSS (Cross-Site Scripting)
+const sanitizeInput = (input: string) => input.replace(/[<>]/g, '');
+
 export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ setPage }) => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -133,25 +136,41 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
     setLoading(true);
     setError(null);
 
+    // SECURITY: Validate email to prevent malformed data insertion and possible injection
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setError('Invalid email format detected.');
+      setLoading(false);
+      return;
+    }
+
+    // SECURITY: Validate phone number format to prevent overly large strings or unexpected payloads
+    if (!/^[\d\s+\-()]{7,20}$/.test(formData.number)) {
+      setError('Invalid communication channel ID format.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const { error: dbError } = await supabase
         .from('members')
         .insert([
           {
-            name: formData.name,
+            name: sanitizeInput(formData.name),
             phone: formData.number,
             email: formData.email,
-            linkedin: formData.linkedin,
-            github: formData.github
+            linkedin: sanitizeInput(formData.linkedin),
+            github: sanitizeInput(formData.github)
           }
         ]);
 
       if (dbError) throw dbError;
 
       setSubmitted(true);
-    } catch (err: any) {
+    // SECURITY: Use 'unknown' to avoid exposing underlying error object types
+    } catch (err: unknown) {
       console.error('Error saving to database:', err);
-      setError(err.message || 'Synchronization failed. Please check your credentials.');
+      // SECURITY: Generic error message to prevent database information leakage
+      setError('Synchronization failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
