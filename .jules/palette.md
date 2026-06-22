@@ -1,0 +1,3 @@
+## 2024-10-31 - Explicit Label Bindings in Custom Typography
+**Learning:** In design systems heavily utilizing custom typography and styles for labels (like `<label>` elements designed to look like raw text or terminal output), developers frequently forget to add `htmlFor` and input `id` attributes. This breaks click-to-focus functionality and screen reader association, severely impacting accessibility.
+**Action:** Always proactively search for `<label>` elements missing the `htmlFor` attribute in form components, explicitly binding them to their respective inputs, to maintain baseline accessibility without compromising the custom visual design.
