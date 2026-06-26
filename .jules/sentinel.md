@@ -1,0 +1,4 @@
+## 2025-02-28 - Information Leakage via Raw Error Exposure
+**Vulnerability:** Information Leakage - The application was directly exposing raw database error messages (`err.message`) to the frontend UI (`setError(err.message)`) upon failed operations (e.g., Supabase insert in `SubPages.tsx`).
+**Learning:** Directly exposing internal error objects to user-facing states allows potential malicious actors to glean system constraints, query structures, or other sensitive details from standard database engine or API wrapper errors. While React hides stack traces in production by default, explicit error message bindings bypass this protection.
+**Prevention:** Always catch raw errors and substitute them with generic, user-friendly UI messages (e.g., 'Synchronization failed. Please verify your input.'), while maintaining visibility via safe internal logging mechanisms like `console.error` for developer debugging.
