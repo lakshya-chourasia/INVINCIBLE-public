@@ -134,6 +134,17 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
     setError(null);
 
     try {
+      // 🛡️ Sentinel Security Fix: Add input validation and length limits to prevent DoS and malformed data
+      if (formData.name.length > 100 || formData.email.length > 255) {
+        throw new Error('Input length limit exceeded');
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        throw new Error('Invalid email format');
+      }
+      if (formData.linkedin && !formData.linkedin.startsWith('https://')) {
+        throw new Error('LinkedIn URL must be secure (HTTPS)');
+      }
+
       const { error: dbError } = await supabase
         .from('members')
         .insert([
@@ -151,7 +162,9 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
       setSubmitted(true);
     } catch (err: any) {
       console.error('Error saving to database:', err);
-      setError(err.message || 'Synchronization failed. Please check your credentials.');
+      // 🛡️ Sentinel Security Fix: Fail securely by preventing database error leakage to the client UI
+      const isValidationError = err.message === 'Invalid email format' || err.message === 'LinkedIn URL must be secure (HTTPS)' || err.message === 'Input length limit exceeded';
+      setError(isValidationError ? err.message : 'Synchronization failed. Please verify your data and try again.');
     } finally {
       setLoading(false);
     }
