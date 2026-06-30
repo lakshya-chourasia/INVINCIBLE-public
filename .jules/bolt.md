@@ -1,0 +1,3 @@
+## 2024-05-24 - Pre-calculate Probabilistic Updates in High-Frequency Canvas Loops
+**Learning:** Evaluating `Math.random() < chance` iteratively for every cell in a high-frequency (e.g., 30fps) canvas rendering loop consumes significant CPU time and causes unnecessary overhead.
+**Action:** Pre-calculate the total number of updates needed (`Math.floor(totalCells * chance)`) and directly update randomly selected indices. This avoids thousands of redundant random evaluations per frame.
