@@ -150,8 +150,9 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
 
       setSubmitted(true);
     } catch (err: any) {
+      // 🛡️ Sentinel: Prevent leaking raw database error messages to the UI
       console.error('Error saving to database:', err);
-      setError(err.message || 'Synchronization failed. Please check your credentials.');
+      setError('Synchronization failed. Please check your input and try again.');
     } finally {
       setLoading(false);
     }
@@ -205,6 +206,7 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
                 required
                 disabled={loading}
                 type="text"
+                maxLength={100}
                 value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
                 placeholder="0x_identity"
@@ -217,6 +219,7 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
                 required
                 disabled={loading}
                 type="tel"
+                maxLength={50}
                 value={formData.number}
                 onChange={e => setFormData({ ...formData, number: e.target.value })}
                 placeholder="+00_telemetry"
@@ -229,6 +232,7 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
                 required
                 disabled={loading}
                 type="email"
+                maxLength={255}
                 value={formData.email}
                 onChange={e => setFormData({ ...formData, email: e.target.value })}
                 placeholder="protocol@intelligence.net"
@@ -241,6 +245,7 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
                 required
                 disabled={loading}
                 type="url"
+                maxLength={255}
                 value={formData.linkedin}
                 onChange={e => setFormData({ ...formData, linkedin: e.target.value })}
                 placeholder="linkedin.com/in/identity"
@@ -252,6 +257,7 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
               <input
                 disabled={loading}
                 type="url"
+                maxLength={255}
                 value={formData.github}
                 onChange={e => setFormData({ ...formData, github: e.target.value })}
                 placeholder="github.com/repository_host"
