@@ -133,6 +133,13 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
     setLoading(true);
     setError(null);
 
+    // 🛡️ Sentinel: Input validation to prevent excessively large payloads
+    if (Object.values(formData).some(val => val.length > 255)) {
+      setError('Input exceeds maximum allowed length.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const { error: dbError } = await supabase
         .from('members')
@@ -151,7 +158,8 @@ export const JoinCollective: React.FC<{ setPage: (p: string) => void }> = ({ set
       setSubmitted(true);
     } catch (err: any) {
       console.error('Error saving to database:', err);
-      setError(err.message || 'Synchronization failed. Please check your credentials.');
+      // 🛡️ Sentinel: Prevent leaking database error details to the UI
+      setError('Synchronization failed. Please check your input and try again.');
     } finally {
       setLoading(false);
     }
