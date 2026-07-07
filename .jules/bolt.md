@@ -1,0 +1,3 @@
+## 2024-05-23 - Avoid Iterative Probabilistic Checks in Canvas Render Loops
+**Learning:** In high-frequency Canvas rendering loops, evaluating probabilistic checks (e.g., `Math.random() < chance`) for every cell iteratively causes significant overhead. Pre-calculating the total number of updates needed (`Math.floor(totalCells * chance)`) and updating randomly selected indices significantly reduces execution time.
+**Action:** Always pre-calculate random updates for large grids in animation loops rather than running `Math.random()` per cell.
